@@ -1,0 +1,67 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Lint & Build Check ───────────────────────────────────────────────────
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: phase4_dashboard_react/package.json
+
+      - name: Install dependencies
+        working-directory: phase4_dashboard_react
+        run: npm ci
+
+      - name: Build React app
+        working-directory: phase4_dashboard_react
+        run: npm run build
+        env:
+          CI: false
+
+      - name: Check build output
+        run: |
+          echo "Build output:"
+          ls -lh phase4_dashboard_react/build/static/js/
+          SIZE=$(du -sh phase4_dashboard_react/build | cut -f1)
+          echo "Total build size: $SIZE"
+
+  # ── Python syntax check ───────────────────────────────────────────────────
+  python-check:
+    name: Python Syntax Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check Lambda syntax
+        run: |
+          echo "Checking Lambda function syntax..."
+          for f in phase3_agents/lambda_functions/*.py; do
+            python3 -m py_compile "$f" && echo "✅ $f" || echo "❌ $f"
+          done
+
+      - name: Check CDK stack syntax
+        run: |
+          pip install aws-cdk-lib constructs boto3 --quiet
+          for f in phase3_agents/stacks/*.py; do
+            python3 -m py_compile "$f" && echo "✅ $f" || echo "❌ $f"
+          done

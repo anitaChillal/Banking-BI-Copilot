@@ -1,0 +1,480 @@
+{
+ "Description": "Phase 1 — Lake Formation column-level governance",
+ "Resources": {
+  "LFSettings": {
+   "Type": "AWS::LakeFormation::DataLakeSettings",
+   "Properties": {
+    "Admins": [
+     {
+      "DataLakePrincipalIdentifier": "arn:aws:iam::713520983597:root"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/LFSettings"
+   }
+  },
+  "LFServiceRole22F86E3F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lakeformation.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "RoleName": "banking-bi-lakeformation-role",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/LFServiceRole/Resource"
+   }
+  },
+  "LFServiceRoleDefaultPolicyFBF16367": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeKey09476F72ArnAB3AB838"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LFServiceRoleDefaultPolicyFBF16367",
+    "Roles": [
+     {
+      "Ref": "LFServiceRole22F86E3F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/LFServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LFResource": {
+   "Type": "AWS::LakeFormation::Resource",
+   "Properties": {
+    "ResourceArn": {
+     "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+    },
+    "RoleArn": {
+     "Fn::GetAtt": [
+      "LFServiceRole22F86E3F",
+      "Arn"
+     ]
+    },
+    "UseServiceLinkedRole": false
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/LFResource"
+   }
+  },
+  "AnalystRole0F8FB54B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::713520983597:root"
+          ]
+         ]
+        }
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Banking analysts — curated zone, no raw PII columns",
+    "RoleName": "banking-bi-analyst",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AnalystRole/Resource"
+   }
+  },
+  "AgentRoleF4A42D6B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "bedrock.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Bedrock agents — published zone read + Redshift Spectrum",
+    "RoleName": "banking-bi-agent",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AgentRole/Resource"
+   }
+  },
+  "AuditorRoleB9C8BBB2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::713520983597:root"
+          ]
+         ]
+        }
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Read-only access to all zones for compliance auditing",
+    "RoleName": "banking-bi-auditor",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AuditorRole/Resource"
+   }
+  },
+  "AnalystDBPermission": {
+   "Type": "AWS::LakeFormation::Permissions",
+   "Properties": {
+    "DataLakePrincipal": {
+     "DataLakePrincipalIdentifier": {
+      "Fn::GetAtt": [
+       "AnalystRole0F8FB54B",
+       "Arn"
+      ]
+     }
+    },
+    "Permissions": [
+     "DESCRIBE"
+    ],
+    "Resource": {
+     "DatabaseResource": {
+      "CatalogId": "713520983597",
+      "Name": "banking_curated"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AnalystDBPermission"
+   }
+  },
+  "AgentDBPermission": {
+   "Type": "AWS::LakeFormation::Permissions",
+   "Properties": {
+    "DataLakePrincipal": {
+     "DataLakePrincipalIdentifier": {
+      "Fn::GetAtt": [
+       "AgentRoleF4A42D6B",
+       "Arn"
+      ]
+     }
+    },
+    "Permissions": [
+     "DESCRIBE",
+     "CREATE_TABLE",
+     "ALTER",
+     "DROP"
+    ],
+    "Resource": {
+     "DatabaseResource": {
+      "CatalogId": "713520983597",
+      "Name": "banking_curated"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AgentDBPermission"
+   }
+  },
+  "AuditorDBbankingrawPermission": {
+   "Type": "AWS::LakeFormation::Permissions",
+   "Properties": {
+    "DataLakePrincipal": {
+     "DataLakePrincipalIdentifier": {
+      "Fn::GetAtt": [
+       "AuditorRoleB9C8BBB2",
+       "Arn"
+      ]
+     }
+    },
+    "Permissions": [
+     "DESCRIBE"
+    ],
+    "Resource": {
+     "DatabaseResource": {
+      "CatalogId": "713520983597",
+      "Name": "banking_raw"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AuditorDBbanking_rawPermission"
+   }
+  },
+  "AuditorDBbankingcuratedPermission": {
+   "Type": "AWS::LakeFormation::Permissions",
+   "Properties": {
+    "DataLakePrincipal": {
+     "DataLakePrincipalIdentifier": {
+      "Fn::GetAtt": [
+       "AuditorRoleB9C8BBB2",
+       "Arn"
+      ]
+     }
+    },
+    "Permissions": [
+     "DESCRIBE"
+    ],
+    "Resource": {
+     "DatabaseResource": {
+      "CatalogId": "713520983597",
+      "Name": "banking_curated"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AuditorDBbanking_curatedPermission"
+   }
+  },
+  "AnalystColPermcustomeraccounts": {
+   "Type": "AWS::LakeFormation::Permissions",
+   "Properties": {
+    "DataLakePrincipal": {
+     "DataLakePrincipalIdentifier": {
+      "Fn::GetAtt": [
+       "AnalystRole0F8FB54B",
+       "Arn"
+      ]
+     }
+    },
+    "Permissions": [
+     "SELECT"
+    ],
+    "Resource": {
+     "TableWithColumnsResource": {
+      "CatalogId": "713520983597",
+      "ColumnWildcard": {
+       "ExcludedColumnNames": [
+        "customer_name",
+        "national_id",
+        "date_of_birth",
+        "phone_number",
+        "email_address",
+        "home_address"
+       ]
+      },
+      "DatabaseName": "banking_raw",
+      "Name": "customer_accounts"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AnalystColPermcustomer_accounts"
+   }
+  },
+  "AnalystColPermloanapplications": {
+   "Type": "AWS::LakeFormation::Permissions",
+   "Properties": {
+    "DataLakePrincipal": {
+     "DataLakePrincipalIdentifier": {
+      "Fn::GetAtt": [
+       "AnalystRole0F8FB54B",
+       "Arn"
+      ]
+     }
+    },
+    "Permissions": [
+     "SELECT"
+    ],
+    "Resource": {
+     "TableWithColumnsResource": {
+      "CatalogId": "713520983597",
+      "ColumnWildcard": {
+       "ExcludedColumnNames": [
+        "applicant_name",
+        "national_id",
+        "employer_name",
+        "annual_income_exact"
+       ]
+      },
+      "DatabaseName": "banking_raw",
+      "Name": "loan_applications"
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/AnalystColPermloan_applications"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/yWKSwrCMBBAz+I+HbUtXqAuXZT2ADLGVMd8BjIppYTcXYyr9+C9Ftr+AqcDbtLop20cPSDPCbVVuMk9O7Rm4egxEQfIwxKumPCG1swmJQovUcMSJiO8Rm1+PproSYQ4SFGEHvLErpbKkR3pvY7VSilq3NObw7GDcw/d4SNETVxDIm9g+vMLZAdkOqcAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGovernance/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

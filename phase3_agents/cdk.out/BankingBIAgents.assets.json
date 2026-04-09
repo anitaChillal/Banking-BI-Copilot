@@ -1,0 +1,51 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6": {
+      "displayName": "BankingBIAgents/Custom::S3AutoDeleteObjectsCustomResourceProvider Code",
+      "source": {
+        "path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "713520983597-us-east-1-daf5e593": {
+          "bucketName": "cdk-hnb659fds-assets-713520983597-us-east-1",
+          "objectKey": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::713520983597:role/cdk-hnb659fds-file-publishing-role-713520983597-us-east-1"
+        }
+      }
+    },
+    "05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222": {
+      "displayName": "KPILambda/Code",
+      "source": {
+        "path": "asset.05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "713520983597-us-east-1-9b90bbd5": {
+          "bucketName": "cdk-hnb659fds-assets-713520983597-us-east-1",
+          "objectKey": "05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::713520983597:role/cdk-hnb659fds-file-publishing-role-713520983597-us-east-1"
+        }
+      }
+    },
+    "ff8c6312cc68ab375f0d351a20dd6cdd382922865cd7b81774daa257cbe7d85f": {
+      "displayName": "BankingBIAgents Template",
+      "source": {
+        "path": "BankingBIAgents.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "713520983597-us-east-1-3a5490d5": {
+          "bucketName": "cdk-hnb659fds-assets-713520983597-us-east-1",
+          "objectKey": "ff8c6312cc68ab375f0d351a20dd6cdd382922865cd7b81774daa257cbe7d85f.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::713520983597:role/cdk-hnb659fds-file-publishing-role-713520983597-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

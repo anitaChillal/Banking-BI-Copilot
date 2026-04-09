@@ -1,0 +1,117 @@
+{
+  "/BankingBIGovernance": [
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Phase",
+          "value": "1-DataFoundation"
+        },
+        {
+          "key": "Project",
+          "value": "BankingBICopilot"
+        }
+      ]
+    }
+  ],
+  "/BankingBIGovernance/LFSettings": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LFSettings"
+    }
+  ],
+  "/BankingBIGovernance/LFResource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LFResource"
+    }
+  ],
+  "/BankingBIGovernance/AnalystDBPermission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AnalystDBPermission"
+    }
+  ],
+  "/BankingBIGovernance/AgentDBPermission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AgentDBPermission"
+    }
+  ],
+  "/BankingBIGovernance/AuditorDBbanking_rawPermission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditorDBbankingrawPermission"
+    }
+  ],
+  "/BankingBIGovernance/AuditorDBbanking_curatedPermission": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditorDBbankingcuratedPermission"
+    }
+  ],
+  "/BankingBIGovernance/AnalystColPermcustomer_accounts": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AnalystColPermcustomeraccounts"
+    }
+  ],
+  "/BankingBIGovernance/AnalystColPermloan_applications": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AnalystColPermloanapplications"
+    }
+  ],
+  "/BankingBIGovernance/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/BankingBIGovernance/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/BankingBIGovernance/LFServiceRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LFServiceRole22F86E3F"
+    }
+  ],
+  "/BankingBIGovernance/AnalystRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AnalystRole0F8FB54B"
+    }
+  ],
+  "/BankingBIGovernance/AgentRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AgentRoleF4A42D6B"
+    }
+  ],
+  "/BankingBIGovernance/AuditorRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AuditorRoleB9C8BBB2"
+    }
+  ],
+  "/BankingBIGovernance/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/BankingBIGovernance/LFServiceRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LFServiceRoleDefaultPolicyFBF16367"
+    }
+  ]
+}

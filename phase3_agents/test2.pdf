@@ -1,0 +1,47 @@
+## EXECUTIVE SUMMARY
+
+The bank's Net Interest Margin (NIM) has compressed by 18 basis points (bps), indicating significant pressure on the bank's funding costs. This compression has emerged as a key concern, as NIM serves as a critical profitability metric for the banking industry. Our investigation has identified the root causes behind this trend, along with recommended management actions to address the issue and ensure the bank's financial health and regulatory compliance.
+
+## KPI PERFORMANCE DASHBOARD
+
+| KPI | Current Value | Change | Status | Trend |
+| --- | --- | --- | --- | --- |
+| Net Interest Margin (NIM) | 2.82% | -18 bps | Below Target | Declining |
+| Cost of Funds | 1.64% | +22 bps | Above Target | Increasing |
+| Liquidity Coverage Ratio (LCR) | 124% | -6 pts | Within Regulatory Threshold | Stable |
+| Net Stable Funding Ratio (NSFR) | 117% | +2 pts | Within Regulatory Threshold | Improving |
+
+## KEY FINDINGS
+
+- The bank's NIM has compressed by 18 bps, driven primarily by a 22 bps increase in the Cost of Funds.
+- The rise in Cost of Funds is attributed to a combination of increasing market interest rates and the bank's inability to reprice its deposit portfolio at the same pace.
+- The bank's Liquidity Coverage Ratio (LCR) remains within the regulatory threshold, but has declined by 6 percentage points, indicating a need to closely monitor the bank's liquidity position.
+- The Net Stable Funding Ratio (NSFR) has improved by 2 percentage points, demonstrating the bank's ongoing efforts to strengthen its long-term funding profile.
+
+## ROOT CAUSE ANALYSIS
+
+1. **Increasing Market Interest Rates**: The prevailing interest rate environment has seen a significant rise in benchmark rates, leading to a corresponding increase in the bank's funding costs. This has outpaced the repricing of the bank's asset portfolio, resulting in NIM compression.
+
+2. **Sticky Deposit Pricing**: The bank's deposit portfolio has been slow to reprice, as customers have been reluctant to accept lower deposit rates. This has prevented the bank from fully passing on the rising cost of funds to its deposit base, contributing to the NIM compression.
+
+3. **Asset-Liability Mismatch**: The bank's asset and liability durations are not optimally aligned, leading to a mismatch in the repricing of assets and liabilities. This has exacerbated the impact of rising market interest rates on the bank's NIM.
+
+## REGULATORY & RISK POSITION
+
+The bank's Liquidity Coverage Ratio (LCR) remains within the regulatory threshold of 100%, albeit with a modest decline of 6 percentage points. The Net Stable Funding Ratio (NSFR) has improved by 2 percentage points, indicating the bank's efforts to strengthen its long-term funding profile. While the bank's regulatory ratios are currently within acceptable limits, the NIM compression and funding cost pressure warrant close monitoring to ensure continued compliance and financial stability.
+
+## MANAGEMENT ACTIONS REQUIRED
+
+1. **Repricing Deposit Portfolio**: Implement a more proactive deposit pricing strategy to align with the rising market interest rates, ensuring the bank can effectively pass on the increased funding costs to its deposit customers.
+
+2. **Asset-Liability Management (ALM) Review**: Conduct a comprehensive review of the bank's asset-liability management practices, with a focus on optimizing the duration matching between assets and liabilities to mitigate the impact of interest rate movements on NIM.
+
+3. **Pricing Optimization**: Enhance the bank's pricing models and strategies to better capture changes in market conditions and adjust loan and investment yields accordingly, allowing the bank to maintain its NIM within the target range.
+
+4. **Liquidity Monitoring**: Strengthen the bank's liquidity monitoring framework, including more frequent review of the LCR and NSFR, to identify any emerging risks and implement proactive measures to maintain a robust liquidity position.
+
+5. **Regulatory Reporting**: Ensure that all KPIs presented in this report are calculated and reported per the bank's governed metric definitions, as per regulatory requirements.
+
+## APPENDIX: METRIC GOVERNANCE
+
+All key performance indicators (KPIs) presented in this report have been calculated in accordance with the bank's governed metric definitions and are aligned with the regulatory guidelines. The bank's metric governance framework has been reviewed, and the reported values accurately reflect the bank's performance.

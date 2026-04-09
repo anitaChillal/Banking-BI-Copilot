@@ -1,0 +1,1111 @@
+{
+ "Description": "Phase 1 — Glue ETL jobs and Data Catalog",
+ "Resources": {
+  "GlueRoleDEDFFD2C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "glue.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSGlueServiceRole"
+       ]
+      ]
+     }
+    ],
+    "RoleName": "banking-bi-glue-role",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/GlueRole/Resource"
+   }
+  },
+  "GlueRoleDefaultPolicy83D85957": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging",
+        "s3:Abort*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:Encrypt",
+        "kms:ReEncrypt*",
+        "kms:GenerateDataKey*"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeKey09476F72ArnAB3AB838"
+       }
+      },
+      {
+       "Action": [
+        "redshift-serverless:GetWorkgroup",
+        "redshift-serverless:GetCredentials",
+        "redshift-data:ExecuteStatement",
+        "redshift-data:DescribeStatement",
+        "redshift-data:GetStatementResult",
+        "secretsmanager:GetSecretValue",
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "GlueRoleDefaultPolicy83D85957",
+    "Roles": [
+     {
+      "Ref": "GlueRoleDEDFFD2C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/GlueRole/DefaultPolicy/Resource"
+   }
+  },
+  "CuratedDB": {
+   "Type": "AWS::Glue::Database",
+   "Properties": {
+    "CatalogId": "713520983597",
+    "DatabaseInput": {
+     "Description": "Curated banking KPI data — validated Parquet",
+     "Name": "banking_curated"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedDB"
+   }
+  },
+  "RawDB": {
+   "Type": "AWS::Glue::Database",
+   "Properties": {
+    "CatalogId": "713520983597",
+    "DatabaseInput": {
+     "Description": "Raw landing zone — core banking exports",
+     "Name": "banking_raw"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawDB"
+   }
+  },
+  "RawCrawlerNim": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_raw",
+    "Description": "Crawls raw Net Interest Margin exports",
+    "Name": "banking-bi-raw-nim",
+    "RecrawlPolicy": {
+     "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**",
+        "_staging/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/raw/nim/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawCrawlerNim"
+   }
+  },
+  "CuratedCrawlerNim": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_curated",
+    "Description": "Crawls curated Net Interest Margin Parquet",
+    "Name": "banking-bi-curated-nim",
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/curated/nim/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlerNim"
+   }
+  },
+  "RawCrawlerNplRatio": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_raw",
+    "Description": "Crawls raw Non-Performing Loan Ratio exports",
+    "Name": "banking-bi-raw-npl_ratio",
+    "RecrawlPolicy": {
+     "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**",
+        "_staging/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/raw/npl_ratio/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawCrawlerNpl_Ratio"
+   }
+  },
+  "CuratedCrawlerNplRatio": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_curated",
+    "Description": "Crawls curated Non-Performing Loan Ratio Parquet",
+    "Name": "banking-bi-curated-npl_ratio",
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/curated/npl_ratio/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlerNpl_Ratio"
+   }
+  },
+  "RawCrawlerCasaRatio": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_raw",
+    "Description": "Crawls raw CASA Ratio exports",
+    "Name": "banking-bi-raw-casa_ratio",
+    "RecrawlPolicy": {
+     "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**",
+        "_staging/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/raw/casa_ratio/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawCrawlerCasa_Ratio"
+   }
+  },
+  "CuratedCrawlerCasaRatio": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_curated",
+    "Description": "Crawls curated CASA Ratio Parquet",
+    "Name": "banking-bi-curated-casa_ratio",
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/curated/casa_ratio/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlerCasa_Ratio"
+   }
+  },
+  "RawCrawlerRoeRoa": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_raw",
+    "Description": "Crawls raw Return on Equity and Assets exports",
+    "Name": "banking-bi-raw-roe_roa",
+    "RecrawlPolicy": {
+     "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**",
+        "_staging/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/raw/roe_roa/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawCrawlerRoe_Roa"
+   }
+  },
+  "CuratedCrawlerRoeRoa": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_curated",
+    "Description": "Crawls curated Return on Equity and Assets Parquet",
+    "Name": "banking-bi-curated-roe_roa",
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/curated/roe_roa/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlerRoe_Roa"
+   }
+  },
+  "RawCrawlerCostIncome": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_raw",
+    "Description": "Crawls raw Cost-to-Income Ratio exports",
+    "Name": "banking-bi-raw-cost_income",
+    "RecrawlPolicy": {
+     "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**",
+        "_staging/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/raw/cost_income/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawCrawlerCost_Income"
+   }
+  },
+  "CuratedCrawlerCostIncome": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_curated",
+    "Description": "Crawls curated Cost-to-Income Ratio Parquet",
+    "Name": "banking-bi-curated-cost_income",
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/curated/cost_income/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlerCost_Income"
+   }
+  },
+  "RawCrawlerLcrNsfr": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_raw",
+    "Description": "Crawls raw Liquidity Coverage and NSFR exports",
+    "Name": "banking-bi-raw-lcr_nsfr",
+    "RecrawlPolicy": {
+     "RecrawlBehavior": "CRAWL_NEW_FOLDERS_ONLY"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**",
+        "_staging/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/raw/lcr_nsfr/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawCrawlerLcr_Nsfr"
+   }
+  },
+  "CuratedCrawlerLcrNsfr": {
+   "Type": "AWS::Glue::Crawler",
+   "Properties": {
+    "DatabaseName": "banking_curated",
+    "Description": "Crawls curated Liquidity Coverage and NSFR Parquet",
+    "Name": "banking-bi-curated-lcr_nsfr",
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "SchemaChangePolicy": {
+     "DeleteBehavior": "LOG",
+     "UpdateBehavior": "LOG"
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Targets": {
+     "S3Targets": [
+      {
+       "Exclusions": [
+        "_temporary/**"
+       ],
+       "Path": {
+        "Fn::Join": [
+         "",
+         [
+          "s3://",
+          {
+           "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+          },
+          "/curated/lcr_nsfr/"
+         ]
+        ]
+       }
+      }
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlerLcr_Nsfr"
+   }
+  },
+  "RawToCuratedJob": {
+   "Type": "AWS::Glue::Job",
+   "Properties": {
+    "Command": {
+     "Name": "glueetl",
+     "PythonVersion": "3",
+     "ScriptLocation": {
+      "Fn::Join": [
+       "",
+       [
+        "s3://",
+        {
+         "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+        },
+        "/glue-scripts/raw_to_curated.py"
+       ]
+      ]
+     }
+    },
+    "DefaultArguments": {
+     "--job-language": "python",
+     "--enable-metrics": "true",
+     "--enable-continuous-cloudwatch-log": "true",
+     "--enable-spark-ui": "true",
+     "--spark-event-logs-path": {
+      "Fn::Join": [
+       "",
+       [
+        "s3://",
+        {
+         "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+        },
+        "/spark-logs/"
+       ]
+      ]
+     },
+     "--SOURCE_BUCKET": {
+      "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+     },
+     "--TARGET_BUCKET": {
+      "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+     },
+     "--DATABASE_NAME": "banking_raw",
+     "--TempDir": {
+      "Fn::Join": [
+       "",
+       [
+        "s3://",
+        {
+         "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+        },
+        "/glue-temp/"
+       ]
+      ]
+     }
+    },
+    "Description": "Validates, cleanses, and converts raw exports to Parquet",
+    "ExecutionProperty": {
+     "MaxConcurrentRuns": 3
+    },
+    "GlueVersion": "4.0",
+    "Name": "banking-bi-raw-to-curated",
+    "NumberOfWorkers": 5,
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Timeout": 120,
+    "WorkerType": "G.1X"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawToCuratedJob"
+   }
+  },
+  "CuratedToPublishedJob": {
+   "Type": "AWS::Glue::Job",
+   "Properties": {
+    "Command": {
+     "Name": "glueetl",
+     "PythonVersion": "3",
+     "ScriptLocation": {
+      "Fn::Join": [
+       "",
+       [
+        "s3://",
+        {
+         "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+        },
+        "/glue-scripts/curated_to_published.py"
+       ]
+      ]
+     }
+    },
+    "DefaultArguments": {
+     "--job-language": "python",
+     "--enable-metrics": "true",
+     "--enable-continuous-cloudwatch-log": "true",
+     "--SOURCE_BUCKET": {
+      "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+     },
+     "--TARGET_BUCKET": {
+      "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+     },
+     "--REDSHIFT_CLUSTER": "banking-bi-aurora",
+     "--DB_NAME": "banking_bi",
+     "--TempDir": {
+      "Fn::Join": [
+       "",
+       [
+        "s3://",
+        {
+         "Fn::ImportValue": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+        },
+        "/glue-temp/"
+       ]
+      ]
+     }
+    },
+    "Description": "Computes KPI aggregates and loads to published zone + Redshift",
+    "GlueVersion": "4.0",
+    "Name": "banking-bi-curated-to-published",
+    "NumberOfWorkers": 10,
+    "Role": {
+     "Fn::GetAtt": [
+      "GlueRoleDEDFFD2C",
+      "Arn"
+     ]
+    },
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Timeout": 180,
+    "WorkerType": "G.2X"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedToPublishedJob"
+   }
+  },
+  "ETLWorkflow": {
+   "Type": "AWS::Glue::Workflow",
+   "Properties": {
+    "Description": "Full pipeline: crawl raw → transform → publish → load Redshift",
+    "Name": "banking-bi-etl-pipeline",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/ETLWorkflow"
+   }
+  },
+  "ScheduleTrigger": {
+   "Type": "AWS::Glue::Trigger",
+   "Properties": {
+    "Actions": [
+     {
+      "JobName": "banking-bi-raw-to-curated"
+     }
+    ],
+    "Name": "banking-bi-daily-start",
+    "Schedule": "cron(0 2 * * ? *)",
+    "StartOnCreation": true,
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Type": "SCHEDULED",
+    "WorkflowName": "banking-bi-etl-pipeline"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/ScheduleTrigger"
+   }
+  },
+  "RawToCuratedTrigger": {
+   "Type": "AWS::Glue::Trigger",
+   "Properties": {
+    "Actions": [
+     {
+      "JobName": "banking-bi-curated-to-published"
+     }
+    ],
+    "Name": "banking-bi-raw-to-curated-trigger",
+    "Predicate": {
+     "Conditions": [
+      {
+       "JobName": "banking-bi-raw-to-curated",
+       "LogicalOperator": "EQUALS",
+       "State": "SUCCEEDED"
+      }
+     ],
+     "Logical": "AND"
+    },
+    "StartOnCreation": true,
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Type": "CONDITIONAL",
+    "WorkflowName": "banking-bi-etl-pipeline"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/RawToCuratedTrigger"
+   }
+  },
+  "CuratedCrawlTrigger0": {
+   "Type": "AWS::Glue::Trigger",
+   "Properties": {
+    "Actions": [
+     {
+      "CrawlerName": "banking-bi-curated-nim"
+     },
+     {
+      "CrawlerName": "banking-bi-curated-npl_ratio"
+     }
+    ],
+    "Name": "banking-bi-curated-crawl-0",
+    "Predicate": {
+     "Conditions": [
+      {
+       "JobName": "banking-bi-curated-to-published",
+       "LogicalOperator": "EQUALS",
+       "State": "SUCCEEDED"
+      }
+     ],
+     "Logical": "AND"
+    },
+    "StartOnCreation": true,
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Type": "CONDITIONAL",
+    "WorkflowName": "banking-bi-etl-pipeline"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlTrigger0"
+   }
+  },
+  "CuratedCrawlTrigger1": {
+   "Type": "AWS::Glue::Trigger",
+   "Properties": {
+    "Actions": [
+     {
+      "CrawlerName": "banking-bi-curated-casa_ratio"
+     },
+     {
+      "CrawlerName": "banking-bi-curated-roe_roa"
+     }
+    ],
+    "Name": "banking-bi-curated-crawl-1",
+    "Predicate": {
+     "Conditions": [
+      {
+       "JobName": "banking-bi-curated-to-published",
+       "LogicalOperator": "EQUALS",
+       "State": "SUCCEEDED"
+      }
+     ],
+     "Logical": "AND"
+    },
+    "StartOnCreation": true,
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Type": "CONDITIONAL",
+    "WorkflowName": "banking-bi-etl-pipeline"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlTrigger1"
+   }
+  },
+  "CuratedCrawlTrigger2": {
+   "Type": "AWS::Glue::Trigger",
+   "Properties": {
+    "Actions": [
+     {
+      "CrawlerName": "banking-bi-curated-cost_income"
+     },
+     {
+      "CrawlerName": "banking-bi-curated-lcr_nsfr"
+     }
+    ],
+    "Name": "banking-bi-curated-crawl-2",
+    "Predicate": {
+     "Conditions": [
+      {
+       "JobName": "banking-bi-curated-to-published",
+       "LogicalOperator": "EQUALS",
+       "State": "SUCCEEDED"
+      }
+     ],
+     "Logical": "AND"
+    },
+    "StartOnCreation": true,
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "1-DataFoundation",
+     "Project": "BankingBICopilot"
+    },
+    "Type": "CONDITIONAL",
+    "WorkflowName": "banking-bi-etl-pipeline"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CuratedCrawlTrigger2"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/yXKQQ6DIBCF4bO4x2mrphewq66MbdJlM1CkUxESwBBDuHuDrv7vJa+BprvCucLoa/GZa00c0iOgmBlG/06EC6TRasn6yewdrCaxlXkoM6VXCamfzA0DcvT7t3cYtXSFd8tLXtbNk7ax+OlIKelyzmzYwteaUwuXDtrq54lqt5pAi4Tx6B/yooLUpAAAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIGlue/CDKMetadata/Default"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

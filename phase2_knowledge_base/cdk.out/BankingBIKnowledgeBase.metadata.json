@@ -1,0 +1,123 @@
+{
+  "/BankingBIKnowledgeBase": [
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Phase",
+          "value": "2-KnowledgeBase"
+        },
+        {
+          "key": "Project",
+          "value": "BankingBICopilot"
+        }
+      ]
+    }
+  ],
+  "/BankingBIKnowledgeBase/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/BankingBIKnowledgeBase/DocsBucketName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DocsBucketName"
+    }
+  ],
+  "/BankingBIKnowledgeBase/KBRoleArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KBRoleArn"
+    }
+  ],
+  "/BankingBIKnowledgeBase/AccountId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AccountId"
+    }
+  ],
+  "/BankingBIKnowledgeBase/Region": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "Region"
+    }
+  ],
+  "/BankingBIKnowledgeBase/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/BankingBIKnowledgeBase/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/BankingBIKnowledgeBase/DocsBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DocsBucketECEA003F"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/BankingBIKnowledgeBase/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+    }
+  ],
+  "/BankingBIKnowledgeBase/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+    }
+  ],
+  "/BankingBIKnowledgeBase/KBRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KBRole3341C7BD"
+    }
+  ],
+  "/BankingBIKnowledgeBase/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/BankingBIKnowledgeBase/DocsBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DocsBucketPolicy7BCF1FB7"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/BankingBIKnowledgeBase/DocsBucket/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DocsBucketAutoDeleteObjectsCustomResourceADA97380"
+    }
+  ],
+  "/BankingBIKnowledgeBase/KBRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KBRoleDefaultPolicy4D62C5B0"
+    }
+  ]
+}

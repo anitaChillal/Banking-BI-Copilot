@@ -1,0 +1,21 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "ab85ed6ff449d7b554027e7af8ccdb0d8e0418a94c1b1924484d74cb333ba8fd": {
+      "displayName": "BankingBIRedshift Template",
+      "source": {
+        "path": "BankingBIRedshift.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "713520983597-us-east-1-cc933981": {
+          "bucketName": "cdk-hnb659fds-assets-713520983597-us-east-1",
+          "objectKey": "ab85ed6ff449d7b554027e7af8ccdb0d8e0418a94c1b1924484d74cb333ba8fd.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::713520983597:role/cdk-hnb659fds-file-publishing-role-713520983597-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

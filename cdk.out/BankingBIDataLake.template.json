@@ -1,0 +1,549 @@
+{
+ "Description": "Phase 1 — S3 data lake with zone partitioning",
+ "Resources": {
+  "LakeKey09476F72": {
+   "Type": "AWS::KMS::Key",
+   "Properties": {
+    "Description": "Banking BI data lake encryption key",
+    "EnableKeyRotation": true,
+    "KeyPolicy": {
+     "Statement": [
+      {
+       "Action": "kms:*",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":iam::713520983597:root"
+          ]
+         ]
+        }
+       },
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIDataLake/LakeKey/Resource"
+   }
+  },
+  "LakeKeyAlias393B19AD": {
+   "Type": "AWS::KMS::Alias",
+   "Properties": {
+    "AliasName": "alias/banking-bi-lake",
+    "TargetKeyId": {
+     "Fn::GetAtt": [
+      "LakeKey09476F72",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIDataLake/LakeKey/Alias/Resource"
+   }
+  },
+  "LakeAccessLogs2771B56A": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "AccessControl": "LogDeliveryWrite",
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "SSEAlgorithm": "AES256"
+       }
+      }
+     ]
+    },
+    "BucketName": "banking-bi-access-logs-713520983597",
+    "OwnershipControls": {
+     "Rules": [
+      {
+       "ObjectOwnership": "ObjectWriter"
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIDataLake/LakeAccessLogs/Resource"
+   }
+  },
+  "LakeAccessLogsPolicyAE10E3BA": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "LakeAccessLogs2771B56A"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "LakeAccessLogs2771B56A",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "LakeAccessLogs2771B56A",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIDataLake/LakeAccessLogs/Policy/Resource"
+   }
+  },
+  "LakeBucket9CD7BBD2": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketEncryption": {
+     "ServerSideEncryptionConfiguration": [
+      {
+       "ServerSideEncryptionByDefault": {
+        "KMSMasterKeyID": {
+         "Fn::GetAtt": [
+          "LakeKey09476F72",
+          "Arn"
+         ]
+        },
+        "SSEAlgorithm": "aws:kms"
+       }
+      }
+     ]
+    },
+    "BucketName": "banking-bi-lake-713520983597",
+    "LifecycleConfiguration": {
+     "Rules": [
+      {
+       "Id": "RawZoneLifecycle",
+       "Prefix": "raw/",
+       "Status": "Enabled",
+       "Transitions": [
+        {
+         "StorageClass": "STANDARD_IA",
+         "TransitionInDays": 90
+        },
+        {
+         "StorageClass": "GLACIER",
+         "TransitionInDays": 365
+        }
+       ]
+      },
+      {
+       "ExpirationInDays": 730,
+       "Id": "PublishedZoneLifecycle",
+       "Prefix": "published/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-raw-nim",
+       "Prefix": "raw/nim/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-raw-npl_ratio",
+       "Prefix": "raw/npl_ratio/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-raw-casa_ratio",
+       "Prefix": "raw/casa_ratio/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-raw-roe_roa",
+       "Prefix": "raw/roe_roa/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-raw-cost_income",
+       "Prefix": "raw/cost_income/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-raw-lcr_nsfr",
+       "Prefix": "raw/lcr_nsfr/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-curated-nim",
+       "Prefix": "curated/nim/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-curated-npl_ratio",
+       "Prefix": "curated/npl_ratio/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-curated-casa_ratio",
+       "Prefix": "curated/casa_ratio/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-curated-roe_roa",
+       "Prefix": "curated/roe_roa/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-curated-cost_income",
+       "Prefix": "curated/cost_income/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-curated-lcr_nsfr",
+       "Prefix": "curated/lcr_nsfr/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-published-nim",
+       "Prefix": "published/nim/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-published-npl_ratio",
+       "Prefix": "published/npl_ratio/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-published-casa_ratio",
+       "Prefix": "published/casa_ratio/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-published-roe_roa",
+       "Prefix": "published/roe_roa/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-published-cost_income",
+       "Prefix": "published/cost_income/",
+       "Status": "Enabled"
+      },
+      {
+       "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+       },
+       "Id": "Abort-published-lcr_nsfr",
+       "Prefix": "published/lcr_nsfr/",
+       "Status": "Enabled"
+      }
+     ]
+    },
+    "LoggingConfiguration": {
+     "DestinationBucketName": {
+      "Ref": "LakeAccessLogs2771B56A"
+     },
+     "LogFilePrefix": "lake-access/"
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VersioningConfiguration": {
+     "Status": "Enabled"
+    }
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIDataLake/LakeBucket/Resource"
+   }
+  },
+  "LakeBucketPolicy7D3A2454": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "LakeBucket9CD7BBD2"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "LakeBucket9CD7BBD2",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "LakeBucket9CD7BBD2",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": "s3:PutObject",
+       "Condition": {
+        "StringNotEquals": {
+         "s3:x-amz-server-side-encryption-aws-kms-key-id": {
+          "Fn::GetAtt": [
+           "LakeKey09476F72",
+           "Arn"
+          ]
+         }
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "LakeBucket9CD7BBD2",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       },
+       "Sid": "DenyNonKMSUploads"
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIDataLake/LakeBucket/Policy/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/0WI3Q6CIBSAn8V7OJW47qvLblw9gEOkdQJx8+AcY7y7Q9q8+n5qqJsrnCu5EleD4RZ7iG8vlWFypS6akSA+dWCPj8u4WZSUY5fESEC8L8pon+ffCtrJogrHLp1SYm3w38mdBFwaENWPEPm8OI+jhlfhBlXnwZqXAAAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIDataLake/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E": {
+   "Value": {
+    "Fn::GetAtt": [
+     "LakeBucket9CD7BBD2",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBIDataLake:ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+   }
+  },
+  "ExportsOutputFnGetAttLakeKey09476F72ArnAB3AB838": {
+   "Value": {
+    "Fn::GetAtt": [
+     "LakeKey09476F72",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBIDataLake:ExportsOutputFnGetAttLakeKey09476F72ArnAB3AB838"
+   }
+  },
+  "ExportsOutputRefLakeBucket9CD7BBD21345140F": {
+   "Value": {
+    "Ref": "LakeBucket9CD7BBD2"
+   },
+   "Export": {
+    "Name": "BankingBIDataLake:ExportsOutputRefLakeBucket9CD7BBD21345140F"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

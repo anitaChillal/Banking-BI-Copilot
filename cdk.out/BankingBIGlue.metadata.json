@@ -1,0 +1,183 @@
+{
+  "/BankingBIGlue": [
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Phase",
+          "value": "1-DataFoundation"
+        },
+        {
+          "key": "Project",
+          "value": "BankingBICopilot"
+        }
+      ]
+    }
+  ],
+  "/BankingBIGlue/CuratedDB": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedDB"
+    }
+  ],
+  "/BankingBIGlue/RawDB": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawDB"
+    }
+  ],
+  "/BankingBIGlue/RawCrawlerNim": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawCrawlerNim"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlerNim": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlerNim"
+    }
+  ],
+  "/BankingBIGlue/RawCrawlerNpl_Ratio": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawCrawlerNplRatio"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlerNpl_Ratio": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlerNplRatio"
+    }
+  ],
+  "/BankingBIGlue/RawCrawlerCasa_Ratio": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawCrawlerCasaRatio"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlerCasa_Ratio": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlerCasaRatio"
+    }
+  ],
+  "/BankingBIGlue/RawCrawlerRoe_Roa": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawCrawlerRoeRoa"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlerRoe_Roa": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlerRoeRoa"
+    }
+  ],
+  "/BankingBIGlue/RawCrawlerCost_Income": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawCrawlerCostIncome"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlerCost_Income": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlerCostIncome"
+    }
+  ],
+  "/BankingBIGlue/RawCrawlerLcr_Nsfr": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawCrawlerLcrNsfr"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlerLcr_Nsfr": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlerLcrNsfr"
+    }
+  ],
+  "/BankingBIGlue/RawToCuratedJob": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawToCuratedJob"
+    }
+  ],
+  "/BankingBIGlue/CuratedToPublishedJob": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedToPublishedJob"
+    }
+  ],
+  "/BankingBIGlue/ETLWorkflow": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ETLWorkflow"
+    }
+  ],
+  "/BankingBIGlue/ScheduleTrigger": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ScheduleTrigger"
+    }
+  ],
+  "/BankingBIGlue/RawToCuratedTrigger": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RawToCuratedTrigger"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlTrigger0": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlTrigger0"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlTrigger1": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlTrigger1"
+    }
+  ],
+  "/BankingBIGlue/CuratedCrawlTrigger2": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CuratedCrawlTrigger2"
+    }
+  ],
+  "/BankingBIGlue/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/BankingBIGlue/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/BankingBIGlue/GlueRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "GlueRoleDEDFFD2C"
+    }
+  ],
+  "/BankingBIGlue/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/BankingBIGlue/GlueRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "GlueRoleDefaultPolicy83D85957"
+    }
+  ]
+}

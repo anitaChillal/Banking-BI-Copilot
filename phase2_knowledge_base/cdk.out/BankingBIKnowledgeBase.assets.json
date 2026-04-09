@@ -1,0 +1,36 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6": {
+      "displayName": "BankingBIKnowledgeBase/Custom::S3AutoDeleteObjectsCustomResourceProvider Code",
+      "source": {
+        "path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "713520983597-us-east-1-daf5e593": {
+          "bucketName": "cdk-hnb659fds-assets-713520983597-us-east-1",
+          "objectKey": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::713520983597:role/cdk-hnb659fds-file-publishing-role-713520983597-us-east-1"
+        }
+      }
+    },
+    "66c27c2ddcf899e0bc1576a66b38914230baabde311f6cec97dbaf62f33a07da": {
+      "displayName": "BankingBIKnowledgeBase Template",
+      "source": {
+        "path": "BankingBIKnowledgeBase.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "713520983597-us-east-1-55997258": {
+          "bucketName": "cdk-hnb659fds-assets-713520983597-us-east-1",
+          "objectKey": "66c27c2ddcf899e0bc1576a66b38914230baabde311f6cec97dbaf62f33a07da.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::713520983597:role/cdk-hnb659fds-file-publishing-role-713520983597-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

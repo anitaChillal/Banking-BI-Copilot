@@ -1,0 +1,942 @@
+{
+ "Description": "Phase 1 — Redshift Serverless KPI warehouse",
+ "Resources": {
+  "RdsVpc4B595F80": {
+   "Type": "AWS::EC2::VPC",
+   "Properties": {
+    "CidrBlock": "10.0.0.0/16",
+    "EnableDnsHostnames": true,
+    "EnableDnsSupport": true,
+    "InstanceTenancy": "default",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "banking-bi-rds-vpc"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/Resource"
+   }
+  },
+  "RdsVpcPrivateSubnet1SubnetEDFDAD88": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.0.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PrivateSubnet1"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PrivateSubnet1/Subnet"
+   }
+  },
+  "RdsVpcPrivateSubnet1RouteTable08F56F2B": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PrivateSubnet1"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PrivateSubnet1/RouteTable"
+   }
+  },
+  "RdsVpcPrivateSubnet1RouteTableAssociation826793A2": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "RdsVpcPrivateSubnet1RouteTable08F56F2B"
+    },
+    "SubnetId": {
+     "Ref": "RdsVpcPrivateSubnet1SubnetEDFDAD88"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PrivateSubnet1/RouteTableAssociation"
+   }
+  },
+  "RdsVpcPrivateSubnet1DefaultRoute3428EBA3": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "RdsVpcPublicSubnet1NATGateway70C13679"
+    },
+    "RouteTableId": {
+     "Ref": "RdsVpcPrivateSubnet1RouteTable08F56F2B"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PrivateSubnet1/DefaultRoute"
+   }
+  },
+  "RdsVpcPrivateSubnet2SubnetC48E44F0": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.1.0/24",
+    "MapPublicIpOnLaunch": false,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Private"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Private"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PrivateSubnet2"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PrivateSubnet2/Subnet"
+   }
+  },
+  "RdsVpcPrivateSubnet2RouteTableF033C61F": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PrivateSubnet2"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PrivateSubnet2/RouteTable"
+   }
+  },
+  "RdsVpcPrivateSubnet2RouteTableAssociationFE8A14DD": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "RdsVpcPrivateSubnet2RouteTableF033C61F"
+    },
+    "SubnetId": {
+     "Ref": "RdsVpcPrivateSubnet2SubnetC48E44F0"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PrivateSubnet2/RouteTableAssociation"
+   }
+  },
+  "RdsVpcPrivateSubnet2DefaultRoute5BBFA3CC": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "NatGatewayId": {
+     "Ref": "RdsVpcPublicSubnet1NATGateway70C13679"
+    },
+    "RouteTableId": {
+     "Ref": "RdsVpcPrivateSubnet2RouteTableF033C61F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PrivateSubnet2/DefaultRoute"
+   }
+  },
+  "RdsVpcPublicSubnet1Subnet5B0073A2": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1a",
+    "CidrBlock": "10.0.2.0/28",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet1/Subnet"
+   }
+  },
+  "RdsVpcPublicSubnet1RouteTable461E88F8": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet1/RouteTable"
+   }
+  },
+  "RdsVpcPublicSubnet1RouteTableAssociation67E17D4B": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "RdsVpcPublicSubnet1RouteTable461E88F8"
+    },
+    "SubnetId": {
+     "Ref": "RdsVpcPublicSubnet1Subnet5B0073A2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet1/RouteTableAssociation"
+   }
+  },
+  "RdsVpcPublicSubnet1DefaultRoute7CB81783": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "RdsVpcIGW6F2E5517"
+    },
+    "RouteTableId": {
+     "Ref": "RdsVpcPublicSubnet1RouteTable461E88F8"
+    }
+   },
+   "DependsOn": [
+    "RdsVpcVPCGW5C34CC78"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet1/DefaultRoute"
+   }
+  },
+  "RdsVpcPublicSubnet1EIP85D94D47": {
+   "Type": "AWS::EC2::EIP",
+   "Properties": {
+    "Domain": "vpc",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet1/EIP"
+   }
+  },
+  "RdsVpcPublicSubnet1NATGateway70C13679": {
+   "Type": "AWS::EC2::NatGateway",
+   "Properties": {
+    "AllocationId": {
+     "Fn::GetAtt": [
+      "RdsVpcPublicSubnet1EIP85D94D47",
+      "AllocationId"
+     ]
+    },
+    "SubnetId": {
+     "Ref": "RdsVpcPublicSubnet1Subnet5B0073A2"
+    },
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PublicSubnet1"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "DependsOn": [
+    "RdsVpcPublicSubnet1DefaultRoute7CB81783",
+    "RdsVpcPublicSubnet1RouteTableAssociation67E17D4B"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet1/NATGateway"
+   }
+  },
+  "RdsVpcPublicSubnet2SubnetCF82436C": {
+   "Type": "AWS::EC2::Subnet",
+   "Properties": {
+    "AvailabilityZone": "us-east-1b",
+    "CidrBlock": "10.0.2.16/28",
+    "MapPublicIpOnLaunch": true,
+    "Tags": [
+     {
+      "Key": "aws-cdk:subnet-name",
+      "Value": "Public"
+     },
+     {
+      "Key": "aws-cdk:subnet-type",
+      "Value": "Public"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PublicSubnet2"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet2/Subnet"
+   }
+  },
+  "RdsVpcPublicSubnet2RouteTableF0384A3B": {
+   "Type": "AWS::EC2::RouteTable",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "BankingBIRedshift/RdsVpc/PublicSubnet2"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet2/RouteTable"
+   }
+  },
+  "RdsVpcPublicSubnet2RouteTableAssociation5492DF0B": {
+   "Type": "AWS::EC2::SubnetRouteTableAssociation",
+   "Properties": {
+    "RouteTableId": {
+     "Ref": "RdsVpcPublicSubnet2RouteTableF0384A3B"
+    },
+    "SubnetId": {
+     "Ref": "RdsVpcPublicSubnet2SubnetCF82436C"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet2/RouteTableAssociation"
+   }
+  },
+  "RdsVpcPublicSubnet2DefaultRoute4D7425A7": {
+   "Type": "AWS::EC2::Route",
+   "Properties": {
+    "DestinationCidrBlock": "0.0.0.0/0",
+    "GatewayId": {
+     "Ref": "RdsVpcIGW6F2E5517"
+    },
+    "RouteTableId": {
+     "Ref": "RdsVpcPublicSubnet2RouteTableF0384A3B"
+    }
+   },
+   "DependsOn": [
+    "RdsVpcVPCGW5C34CC78"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/PublicSubnet2/DefaultRoute"
+   }
+  },
+  "RdsVpcIGW6F2E5517": {
+   "Type": "AWS::EC2::InternetGateway",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Name",
+      "Value": "banking-bi-rds-vpc"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/IGW"
+   }
+  },
+  "RdsVpcVPCGW5C34CC78": {
+   "Type": "AWS::EC2::VPCGatewayAttachment",
+   "Properties": {
+    "InternetGatewayId": {
+     "Ref": "RdsVpcIGW6F2E5517"
+    },
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsVpc/VPCGW"
+   }
+  },
+  "RdsSG7A20FFA2": {
+   "Type": "AWS::EC2::SecurityGroup",
+   "Properties": {
+    "GroupDescription": "Banking BI RDS PostgreSQL",
+    "SecurityGroupEgress": [
+     {
+      "CidrIp": "0.0.0.0/0",
+      "Description": "Allow all outbound traffic by default",
+      "IpProtocol": "-1"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VpcId": {
+     "Ref": "RdsVpc4B595F80"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsSG/Resource"
+   }
+  },
+  "RdsSGfromBankingBIRedshiftRdsSG4E2ACA2854321C3088D7": {
+   "Type": "AWS::EC2::SecurityGroupIngress",
+   "Properties": {
+    "Description": "PostgreSQL within VPC",
+    "FromPort": 5432,
+    "GroupId": {
+     "Fn::GetAtt": [
+      "RdsSG7A20FFA2",
+      "GroupId"
+     ]
+    },
+    "IpProtocol": "tcp",
+    "SourceSecurityGroupId": {
+     "Fn::GetAtt": [
+      "RdsSG7A20FFA2",
+      "GroupId"
+     ]
+    },
+    "ToPort": 5432
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsSG/from BankingBIRedshiftRdsSG4E2ACA28:5432"
+   }
+  },
+  "RdsAdminSecret66D6C09F": {
+   "Type": "AWS::SecretsManager::Secret",
+   "Properties": {
+    "Description": "RDS PostgreSQL admin credentials",
+    "GenerateSecretString": {
+     "ExcludePunctuation": true,
+     "GenerateStringKey": "password",
+     "PasswordLength": 32,
+     "SecretStringTemplate": "{\"username\":\"rsadmin\"}"
+    },
+    "Name": "banking-bi/rds/admin",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsAdminSecret/Resource"
+   }
+  },
+  "RdsAdminSecretAttachment2B83E8F6": {
+   "Type": "AWS::SecretsManager::SecretTargetAttachment",
+   "Properties": {
+    "SecretId": {
+     "Ref": "RdsAdminSecret66D6C09F"
+    },
+    "TargetId": {
+     "Ref": "RdsInstance1D827D17"
+    },
+    "TargetType": "AWS::RDS::DBInstance"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsAdminSecret/Attachment/Resource"
+   }
+  },
+  "RdsS3Role6305E852": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "rds.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Description": "Allows RDS to import from S3 data lake",
+    "RoleName": "banking-bi-rds-s3",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsS3Role/Resource"
+   }
+  },
+  "RdsS3RoleDefaultPolicy77C235FA": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetObject*",
+        "s3:GetBucket*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "kms:Decrypt",
+        "kms:DescribeKey"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::ImportValue": "BankingBIDataLake:ExportsOutputFnGetAttLakeKey09476F72ArnAB3AB838"
+       }
+      },
+      {
+       "Action": [
+        "glue:GetDatabase",
+        "glue:GetDatabases",
+        "glue:GetTable",
+        "glue:GetTables",
+        "glue:GetPartitions"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "RdsS3RoleDefaultPolicy77C235FA",
+    "Roles": [
+     {
+      "Ref": "RdsS3Role6305E852"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsS3Role/DefaultPolicy/Resource"
+   }
+  },
+  "RdsInstanceSubnetGroup9495D83D": {
+   "Type": "AWS::RDS::DBSubnetGroup",
+   "Properties": {
+    "DBSubnetGroupDescription": "Subnet group for RdsInstance database",
+    "SubnetIds": [
+     {
+      "Ref": "RdsVpcPrivateSubnet1SubnetEDFDAD88"
+     },
+     {
+      "Ref": "RdsVpcPrivateSubnet2SubnetC48E44F0"
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsInstance/SubnetGroup/Default"
+   }
+  },
+  "RdsInstance1D827D17": {
+   "Type": "AWS::RDS::DBInstance",
+   "Properties": {
+    "AllocatedStorage": "20",
+    "BackupRetentionPeriod": 1,
+    "CopyTagsToSnapshot": true,
+    "DBInstanceClass": "db.t3.micro",
+    "DBName": "banking_bi",
+    "DBSubnetGroupName": {
+     "Ref": "RdsInstanceSubnetGroup9495D83D"
+    },
+    "DeleteAutomatedBackups": true,
+    "DeletionProtection": false,
+    "EnableCloudwatchLogsExports": [
+     "postgresql"
+    ],
+    "EnablePerformanceInsights": false,
+    "Engine": "postgres",
+    "EngineVersion": "15",
+    "MasterUserPassword": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "RdsAdminSecret66D6C09F"
+       },
+       ":SecretString:password::}}"
+      ]
+     ]
+    },
+    "MasterUsername": {
+     "Fn::Join": [
+      "",
+      [
+       "{{resolve:secretsmanager:",
+       {
+        "Ref": "RdsAdminSecret66D6C09F"
+       },
+       ":SecretString:username::}}"
+      ]
+     ]
+    },
+    "MaxAllocatedStorage": 100,
+    "PubliclyAccessible": false,
+    "StorageEncrypted": true,
+    "StorageType": "gp2",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "1-DataFoundation"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "VPCSecurityGroups": [
+     {
+      "Fn::GetAtt": [
+       "RdsSG7A20FFA2",
+       "GroupId"
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/RdsInstance/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/32QwW6DMBBEvyV3x22TqPeUVBGX1oKIa7U4m8QN2Mi7LkKIf6+AFKJW6mlmn0fe0a7kavMsHxdQ01Ifr8vC5LJNGfRVQE0fLeqVbLNKi+hkMxUJ5c0XMKYht8g9nF3iAuMB8gJnPrMtkdMG2Dg7hYUKeWH0/MVrrHp5A94DYw1NP8WW0Vu8R5mKbtOWGfSlRMsiRR284WbvXaiGCv+C2J49EnWCUHtkKsHCGb1s02G+5Xs3ygH8Gflu3xT4/dIJA6VsEzdeYlDlCqOH7qPrhD+SbHfAkANhbInBahTjLabGu5c/4CfadSJBcsHrYct74CpwJ1TDF2cf1vJpI9eLTzJm6YNlU6JMRv0Glz8J7/MBAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIRedshift/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "DbEndpoint": {
+   "Value": {
+    "Fn::GetAtt": [
+     "RdsInstance1D827D17",
+     "Endpoint.Address"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-RdsEndpoint"
+   }
+  },
+  "DbPort": {
+   "Value": {
+    "Fn::GetAtt": [
+     "RdsInstance1D827D17",
+     "Endpoint.Port"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-RdsPort"
+   }
+  },
+  "AdminSecretArn": {
+   "Value": {
+    "Ref": "RdsAdminSecret66D6C09F"
+   },
+   "Export": {
+    "Name": "BankingBI-RdsAdminSecretArn"
+   }
+  },
+  "S3RoleArn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "RdsS3Role6305E852",
+     "Arn"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-RdsS3RoleArn"
+   }
+  },
+  "DatabaseName": {
+   "Value": "banking_bi",
+   "Export": {
+    "Name": "BankingBI-DatabaseName"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,220 @@
+name: Deploy Banking BI Copilot
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  S3_DASHBOARD_BUCKET: banking-bi-dashboard-713520983597
+  S3_REPORTS_BUCKET: banking-bi-reports-713520983597
+  CLOUDFRONT_DISTRIBUTION_ID: E3QIDDAKQR7J9D
+
+jobs:
+  # ── Job 1: Deploy React Dashboard ────────────────────────────────────────
+  deploy-dashboard:
+    name: Build & Deploy Dashboard
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.head_commit.modified, 'phase4_dashboard_react/') ||
+      github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: phase4_dashboard_react/package.json
+
+      - name: Install dependencies
+        working-directory: phase4_dashboard_react
+        run: npm ci
+
+      - name: Build React app
+        working-directory: phase4_dashboard_react
+        run: npm run build
+        env:
+          CI: false
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync phase4_dashboard_react/build/ \
+            s3://${{ env.S3_DASHBOARD_BUCKET }} \
+            --delete \
+            --cache-control "max-age=31536000" \
+            --exclude "index.html"
+
+          aws s3 cp phase4_dashboard_react/build/index.html \
+            s3://${{ env.S3_DASHBOARD_BUCKET }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"
+
+      - name: Post deployment summary
+        run: |
+          echo "## Dashboard Deployed ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** https://d2qoiexdp2d54l.cloudfront.net" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+
+  # ── Job 2: Deploy Lambda Functions ───────────────────────────────────────
+  deploy-lambdas:
+    name: Deploy Lambda Functions
+    runs-on: ubuntu-latest
+    if: |
+      contains(github.event.head_commit.modified, 'phase3_agents/lambda_functions/') ||
+      github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Package Lambda functions
+        run: |
+          cd phase3_agents/lambda_functions
+          zip -r ../../lambda_functions.zip .
+          cd ../..
+          echo "Lambda package size: $(du -sh lambda_functions.zip)"
+
+      - name: Deploy supervisor Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name banking-bi-supervisor \
+            --zip-file fileb://lambda_functions.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deploy KPI action Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name banking-bi-kpi-action \
+            --zip-file fileb://lambda_functions.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deploy driver action Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name banking-bi-driver-action \
+            --zip-file fileb://lambda_functions.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deploy validation action Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name banking-bi-validation-action \
+            --zip-file fileb://lambda_functions.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deploy PDF action Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name banking-bi-pdf-action \
+            --zip-file fileb://lambda_functions.zip \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Wait for Lambda updates
+        run: |
+          for fn in banking-bi-supervisor banking-bi-kpi-action banking-bi-driver-action banking-bi-validation-action banking-bi-pdf-action; do
+            echo "Waiting for $fn..."
+            aws lambda wait function-updated --function-name $fn --region ${{ env.AWS_REGION }}
+          done
+
+      - name: Post deployment summary
+        run: |
+          echo "## Lambdas Deployed ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Function | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          for fn in banking-bi-supervisor banking-bi-kpi-action banking-bi-driver-action banking-bi-validation-action banking-bi-pdf-action; do
+            echo "| $fn | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
+          done
+
+  # ── Job 3: Smoke Test ────────────────────────────────────────────────────
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    needs: [deploy-dashboard, deploy-lambdas]
+    if: always() && (needs.deploy-dashboard.result == 'success' || needs.deploy-lambdas.result == 'success')
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Test dashboard is reachable
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://d2qoiexdp2d54l.cloudfront.net)
+          echo "Dashboard HTTP status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Dashboard returned $STATUS"
+            exit 1
+          fi
+          echo "✅ Dashboard is reachable"
+
+      - name: Test API Gateway is reachable
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST https://9yxcjs8frj.execute-api.us-east-1.amazonaws.com/prod/chat \
+            -H "Content-Type: application/json" \
+            -d '{"message":"ping"}')
+          echo "API HTTP status: $STATUS"
+          if [ "$STATUS" == "200" ] || [ "$STATUS" == "500" ]; then
+            echo "✅ API Gateway is reachable"
+          else
+            echo "❌ API Gateway returned $STATUS"
+            exit 1
+          fi
+
+      - name: Test supervisor Lambda
+        run: |
+          pip install boto3 --quiet
+          python3 - << 'EOF'
+          import boto3, json
+          client = boto3.client("lambda", region_name="us-east-1")
+          response = client.invoke(
+              FunctionName="banking-bi-supervisor",
+              InvocationType="RequestResponse",
+              Payload=json.dumps({"trigger": "smoke_test", "kpis": ["nim"]}).encode()
+          )
+          result = json.loads(response["Payload"].read())
+          status = result.get("statusCode", 500)
+          print(f"Supervisor Lambda status: {status}")
+          if status == 200:
+              print("✅ Supervisor Lambda OK")
+          else:
+              print(f"⚠️  Supervisor Lambda returned {status}")
+          EOF
+
+      - name: Post test summary
+        run: |
+          echo "## Smoke Tests ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Dashboard: reachable" >> $GITHUB_STEP_SUMMARY
+          echo "- API Gateway: reachable" >> $GITHUB_STEP_SUMMARY
+          echo "- Supervisor Lambda: invoked" >> $GITHUB_STEP_SUMMARY

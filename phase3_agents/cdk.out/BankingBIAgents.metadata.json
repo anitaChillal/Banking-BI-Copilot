@@ -1,0 +1,431 @@
+{
+  "/BankingBIAgents": [
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Phase",
+          "value": "3-Agents"
+        },
+        {
+          "key": "Project",
+          "value": "BankingBICopilot"
+        }
+      ]
+    }
+  ],
+  "/BankingBIAgents/SessionTable": [
+    {
+      "type": "aws:cdk:hasPhysicalName",
+      "data": {
+        "Ref": "SessionTableA016F679"
+      }
+    }
+  ],
+  "/BankingBIAgents/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+    {
+      "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+      "data": true
+    }
+  ],
+  "/BankingBIAgents/KPIAgent": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KPIAgent"
+    }
+  ],
+  "/BankingBIAgents/DriverAgent": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DriverAgent"
+    }
+  ],
+  "/BankingBIAgents/ValidationAgent": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ValidationAgent"
+    }
+  ],
+  "/BankingBIAgents/SupervisorAgent": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SupervisorAgent"
+    }
+  ],
+  "/BankingBIAgents/KPIAlias": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KPIAlias"
+    }
+  ],
+  "/BankingBIAgents/DriverAlias": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DriverAlias"
+    }
+  ],
+  "/BankingBIAgents/ValidationAlias": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ValidationAlias"
+    }
+  ],
+  "/BankingBIAgents/SupervisorAlias": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SupervisorAlias"
+    }
+  ],
+  "/BankingBIAgents/SupervisorAgentId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SupervisorAgentId"
+    }
+  ],
+  "/BankingBIAgents/SupervisorAliasId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SupervisorAliasId"
+    }
+  ],
+  "/BankingBIAgents/KPIAgentId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KPIAgentId"
+    }
+  ],
+  "/BankingBIAgents/KPIAliasId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KPIAliasId"
+    }
+  ],
+  "/BankingBIAgents/DriverAgentId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DriverAgentId"
+    }
+  ],
+  "/BankingBIAgents/ValidationAgentId": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ValidationAgentId"
+    }
+  ],
+  "/BankingBIAgents/ApiEndpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ApiEndpoint"
+    }
+  ],
+  "/BankingBIAgents/ChatEndpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ChatEndpoint"
+    }
+  ],
+  "/BankingBIAgents/OutputBucketName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "OutputBucketName"
+    }
+  ],
+  "/BankingBIAgents/SummaryTopicArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SummaryTopicArn"
+    }
+  ],
+  "/BankingBIAgents/SessionTableName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SessionTableName"
+    }
+  ],
+  "/BankingBIAgents/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/BankingBIAgents/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/BankingBIAgents/SessionTable/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SessionTableA016F679"
+    }
+  ],
+  "/BankingBIAgents/SummaryTopic/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SummaryTopicCB81EE8C"
+    }
+  ],
+  "/BankingBIAgents/OutputBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "OutputBucket7114EB27"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketAutoDeleteObjects"
+      }
+    }
+  ],
+  "/BankingBIAgents/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+    }
+  ],
+  "/BankingBIAgents/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+    }
+  ],
+  "/BankingBIAgents/AgentRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AgentRoleF4A42D6B"
+    }
+  ],
+  "/BankingBIAgents/LambdaRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaRole3A44B857"
+    }
+  ],
+  "/BankingBIAgents/KPILambda/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KPILambda3FE7B951"
+    }
+  ],
+  "/BankingBIAgents/KPILambda/BedrockInvokeKPI": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "KPILambdaBedrockInvokeKPIADA26392"
+    }
+  ],
+  "/BankingBIAgents/DriverLambda/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DriverLambda11B3F668"
+    }
+  ],
+  "/BankingBIAgents/DriverLambda/BedrockInvokeDriver": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DriverLambdaBedrockInvokeDriver48611DF6"
+    }
+  ],
+  "/BankingBIAgents/ValidationLambda/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ValidationLambda6B331F4E"
+    }
+  ],
+  "/BankingBIAgents/ValidationLambda/BedrockInvokeValidation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ValidationLambdaBedrockInvokeValidation1A107B7A"
+    }
+  ],
+  "/BankingBIAgents/PDFLambda/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PDFLambda24F2B082"
+    }
+  ],
+  "/BankingBIAgents/PDFLambda/BedrockInvokePDF": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "PDFLambdaBedrockInvokePDF68468BE1"
+    }
+  ],
+  "/BankingBIAgents/SupervisorLambda/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SupervisorLambdaC3BF47E0"
+    }
+  ],
+  "/BankingBIAgents/SupervisorLambda/BedrockInvokeSupervisor": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "SupervisorLambdaBedrockInvokeSupervisorCA4E298A"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApi61E02BDF"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Account": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiAccount3AC2D373"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Endpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiEndpoint9111C0D6"
+    }
+  ],
+  "/BankingBIAgents/AnomalyRule/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AnomalyRule3B8A11EA"
+    }
+  ],
+  "/BankingBIAgents/AnomalyRule/AllowEventRuleBankingBIAgentsSupervisorLambdaD4A54625": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AnomalyRuleAllowEventRuleBankingBIAgentsSupervisorLambdaD4A5462562D96044"
+    }
+  ],
+  "/BankingBIAgents/DailyRule/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DailyRule7A0FEF67"
+    }
+  ],
+  "/BankingBIAgents/DailyRule/AllowEventRuleBankingBIAgentsSupervisorLambdaD4A54625": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DailyRuleAllowEventRuleBankingBIAgentsSupervisorLambdaD4A546258A14C93A"
+    }
+  ],
+  "/BankingBIAgents/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/BankingBIAgents/OutputBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "OutputBucketPolicyAE009DDC"
+    },
+    {
+      "type": "aws:cdk:analytics:mixin",
+      "data": {
+        "mixin": "aws-cdk-lib.aws_s3.mixins.BucketPolicyStatements"
+      }
+    }
+  ],
+  "/BankingBIAgents/OutputBucket/AutoDeleteObjectsCustomResource/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "OutputBucketAutoDeleteObjectsCustomResource6C7A161F"
+    }
+  ],
+  "/BankingBIAgents/AgentRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AgentRoleDefaultPolicy1027F5D2"
+    }
+  ],
+  "/BankingBIAgents/LambdaRole/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LambdaRoleDefaultPolicy75625A82"
+    }
+  ],
+  "/BankingBIAgents/BIApi/CloudWatchRole/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiCloudWatchRole322622B4"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Deployment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiDeploymentF41811C4b7d01039bb8733836c78f0f0819076e9"
+    }
+  ],
+  "/BankingBIAgents/BIApi/DeploymentStage.prod/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiDeploymentStageprod66400DB6"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiOPTIONSC60CA819"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/investigate/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiinvestigateAD90613C"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/chat/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApichat10E8A80B"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/investigate/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiinvestigateOPTIONS0907BEE1"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/investigate/POST/ApiPermission.BankingBIAgentsBIApi04D9239A.POST..investigate": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiinvestigatePOSTApiPermissionBankingBIAgentsBIApi04D9239APOSTinvestigate6A03570D"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/investigate/POST/ApiPermission.Test.BankingBIAgentsBIApi04D9239A.POST..investigate": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiinvestigatePOSTApiPermissionTestBankingBIAgentsBIApi04D9239APOSTinvestigateAED0DC28"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/investigate/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApiinvestigatePOST2DA1F68B"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/chat/OPTIONS/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApichatOPTIONS66DA1371"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/chat/POST/ApiPermission.BankingBIAgentsBIApi04D9239A.POST..chat": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApichatPOSTApiPermissionBankingBIAgentsBIApi04D9239APOSTchat68A0453E"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/chat/POST/ApiPermission.Test.BankingBIAgentsBIApi04D9239A.POST..chat": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApichatPOSTApiPermissionTestBankingBIAgentsBIApi04D9239APOSTchat2A5C47B1"
+    }
+  ],
+  "/BankingBIAgents/BIApi/Default/chat/POST/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BIApichatPOST9D84BCBB"
+    }
+  ]
+}

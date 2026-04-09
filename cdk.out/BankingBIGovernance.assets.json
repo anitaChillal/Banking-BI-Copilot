@@ -1,0 +1,21 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "bafdd2d9179fb69f0720eccdf41df7386361ae373180c511d9cb7310643f771c": {
+      "displayName": "BankingBIGovernance Template",
+      "source": {
+        "path": "BankingBIGovernance.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "713520983597-us-east-1-9f3d9661": {
+          "bucketName": "cdk-hnb659fds-assets-713520983597-us-east-1",
+          "objectKey": "bafdd2d9179fb69f0720eccdf41df7386361ae373180c511d9cb7310643f771c.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::713520983597:role/cdk-hnb659fds-file-publishing-role-713520983597-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

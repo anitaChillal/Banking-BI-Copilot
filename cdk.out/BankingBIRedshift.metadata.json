@@ -1,0 +1,243 @@
+{
+  "/BankingBIRedshift": [
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Phase",
+          "value": "1-DataFoundation"
+        },
+        {
+          "key": "Project",
+          "value": "BankingBICopilot"
+        }
+      ]
+    }
+  ],
+  "/BankingBIRedshift/DbEndpoint": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DbEndpoint"
+    }
+  ],
+  "/BankingBIRedshift/DbPort": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DbPort"
+    }
+  ],
+  "/BankingBIRedshift/AdminSecretArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "AdminSecretArn"
+    }
+  ],
+  "/BankingBIRedshift/S3RoleArn": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "S3RoleArn"
+    }
+  ],
+  "/BankingBIRedshift/DatabaseName": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "DatabaseName"
+    }
+  ],
+  "/BankingBIRedshift/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/BankingBIRedshift/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpc4B595F80"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/IGW": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcIGW6F2E5517"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/VPCGW": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcVPCGW5C34CC78"
+    }
+  ],
+  "/BankingBIRedshift/RdsSG/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsSG7A20FFA2"
+    }
+  ],
+  "/BankingBIRedshift/RdsSG/from BankingBIRedshiftRdsSG4E2ACA28:5432": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsSGfromBankingBIRedshiftRdsSG4E2ACA2854321C3088D7"
+    }
+  ],
+  "/BankingBIRedshift/RdsAdminSecret/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsAdminSecret66D6C09F"
+    }
+  ],
+  "/BankingBIRedshift/RdsS3Role/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsS3Role6305E852"
+    }
+  ],
+  "/BankingBIRedshift/RdsInstance/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsInstance1D827D17"
+    }
+  ],
+  "/BankingBIRedshift/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PrivateSubnet1/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPrivateSubnet1SubnetEDFDAD88"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PrivateSubnet1/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPrivateSubnet1RouteTable08F56F2B"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PrivateSubnet1/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPrivateSubnet1RouteTableAssociation826793A2"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PrivateSubnet1/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPrivateSubnet1DefaultRoute3428EBA3"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PrivateSubnet2/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPrivateSubnet2SubnetC48E44F0"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PrivateSubnet2/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPrivateSubnet2RouteTableF033C61F"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PrivateSubnet2/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPrivateSubnet2RouteTableAssociationFE8A14DD"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PrivateSubnet2/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPrivateSubnet2DefaultRoute5BBFA3CC"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet1/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet1Subnet5B0073A2"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet1/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet1RouteTable461E88F8"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet1/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet1RouteTableAssociation67E17D4B"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet1/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet1DefaultRoute7CB81783"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet1/EIP": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet1EIP85D94D47"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet1/NATGateway": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet1NATGateway70C13679"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet2/Subnet": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet2SubnetCF82436C"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet2/RouteTable": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet2RouteTableF0384A3B"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet2/RouteTableAssociation": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet2RouteTableAssociation5492DF0B"
+    }
+  ],
+  "/BankingBIRedshift/RdsVpc/PublicSubnet2/DefaultRoute": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsVpcPublicSubnet2DefaultRoute4D7425A7"
+    }
+  ],
+  "/BankingBIRedshift/RdsAdminSecret/Attachment/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsAdminSecretAttachment2B83E8F6"
+    }
+  ],
+  "/BankingBIRedshift/RdsS3Role/DefaultPolicy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsS3RoleDefaultPolicy77C235FA"
+    }
+  ],
+  "/BankingBIRedshift/RdsInstance/SubnetGroup/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "RdsInstanceSubnetGroup9495D83D"
+    }
+  ]
+}

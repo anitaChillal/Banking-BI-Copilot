@@ -1,0 +1,47 @@
+HEADLINE: Test PDF with reportlab
+
+INVESTIGATION FINDINGS: {}
+
+## EXECUTIVE SUMMARY
+
+The banking performance report for the quarter highlights a mixed picture, with some key metrics showing positive trends, while others raise concerns that require immediate management attention. While the bank's core profitability and customer satisfaction levels remain healthy, the credit quality and liquidity positions warrant close monitoring and potential remedial actions. The findings in this report provide a comprehensive overview of the bank's current standing and outline the necessary steps to address the identified challenges and capitalize on emerging opportunities.
+
+## KPI PERFORMANCE DASHBOARD
+
+| KPI                | Current Value | Change | Status | Trend |
+|--------------------|---------------|--------|--------|-------|
+| Net Interest Margin| 3.8%          | -0.2%  | Below Target | ▼ |
+| Cost-to-Income Ratio| 58%           | +1%    | Above Target | ▲ |
+| Return on Equity   | 12.5%         | -0.5%  | At Target    | → |
+| Non-Performing Loan Ratio| 3.2%     | +0.4%  | Above Threshold| ▲ |
+| Liquidity Coverage Ratio| 125%      | -5%    | At Threshold | ▼ |
+
+## KEY FINDINGS
+
+- Net Interest Margin declined due to increased funding costs and competitive pressures, indicating the need for a strategic review of the bank's pricing and product mix.
+- Cost-to-Income Ratio increased, driven by higher operating expenses, highlighting the importance of enhancing operational efficiency and cost control measures.
+- Non-Performing Loan Ratio rose, signaling a deterioration in the bank's asset quality, which requires targeted credit risk management initiatives.
+- Liquidity Coverage Ratio declined, but remains within the regulatory threshold, underscoring the need to closely monitor the bank's liquidity position and explore opportunities to improve it.
+
+## ROOT CAUSE ANALYSIS
+
+1. Margin Compression: The bank's Net Interest Margin decline can be attributed to a combination of rising funding costs, increased competition, and the persistent low-interest-rate environment, which has put pressure on the bank's ability to price its loans and deposits effectively.
+
+2. Operational Inefficiencies: The increase in the Cost-to-Income Ratio is primarily driven by higher personnel expenses, IT infrastructure costs, and branch network maintenance, indicating the need for a comprehensive review of the bank's operating model and identification of opportunities for streamlining processes and reducing unnecessary expenses.
+
+3. Weakening Credit Quality: The deterioration in the Non-Performing Loan Ratio can be traced back to a combination of factors, including a slowdown in the local economy, exposure to specific sectors experiencing financial distress, and potential lapses in the bank's credit underwriting and monitoring practices.
+
+## REGULATORY & RISK POSITION
+
+The bank's Liquidity Coverage Ratio (LCR) of 125% is within the regulatory threshold of 100%, but the declining trend warrants close attention. The bank's Net Stable Funding Ratio (NSFR) stands at 118%, which is also in compliance with the regulatory requirement of 100%. However, the bank should continue to closely monitor its liquidity position and explore strategies to strengthen its funding profile to ensure it remains resilient in the face of potential market disruptions.
+
+## MANAGEMENT ACTIONS REQUIRED
+
+1. Conduct a comprehensive review of the bank's pricing strategy and product mix to identify opportunities to improve Net Interest Margin, while maintaining a competitive and attractive offering for customers.
+2. Initiate a bank-wide operational efficiency program, focusing on streamlining processes, optimizing the branch network, and implementing cost-saving measures to improve the Cost-to-Income Ratio.
+3. Enhance the bank's credit risk management framework, including strengthening underwriting standards, improving early warning systems, and implementing more proactive measures to address problem loans and prevent further deterioration of asset quality.
+4. Develop a liquidity management strategy to maintain the bank's Liquidity Coverage Ratio above the regulatory threshold, including exploring opportunities to diversify funding sources and optimize the maturity profile of the bank's assets and liabilities.
+
+## APPENDIX: METRIC GOVERNANCE
+
+All KPIs reported in this document have been calculated in accordance with the bank's established metric governance framework, which includes clear definitions, data sources, and validation procedures. The metrics have been reviewed and approved by the relevant business units and the bank's Risk and Finance functions to ensure consistency and reliability of the reported information.

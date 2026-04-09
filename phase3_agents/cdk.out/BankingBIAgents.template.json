@@ -1,0 +1,2107 @@
+{
+ "Description": "Phase 3 — Bedrock multi-agent KPI investigation + PDF reports",
+ "Resources": {
+  "SessionTableA016F679": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "session_id",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "timestamp",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "session_id",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "timestamp",
+      "KeyType": "RANGE"
+     }
+    ],
+    "TableName": "banking-bi-agent-sessions",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "TimeToLiveSpecification": {
+     "AttributeName": "ttl",
+     "Enabled": true
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/SessionTable/Resource"
+   }
+  },
+  "SummaryTopicCB81EE8C": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "DisplayName": "Banking BI Executive PDF Reports",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "TopicName": "banking-bi-executive-summaries"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/SummaryTopic/Resource"
+   }
+  },
+  "OutputBucket7114EB27": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "banking-bi-reports-713520983597",
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": true,
+     "BlockPublicPolicy": true,
+     "IgnorePublicAcls": true,
+     "RestrictPublicBuckets": true
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:auto-delete-objects",
+      "Value": "true"
+     },
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/OutputBucket/Resource"
+   }
+  },
+  "OutputBucketPolicyAE009DDC": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "OutputBucket7114EB27"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:*",
+       "Condition": {
+        "Bool": {
+         "aws:SecureTransport": "false"
+        }
+       },
+       "Effect": "Deny",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "OutputBucket7114EB27",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "OutputBucket7114EB27",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:PutBucketPolicy",
+        "s3:GetBucket*",
+        "s3:List*",
+        "s3:DeleteObject*"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": {
+         "Fn::GetAtt": [
+          "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+          "Arn"
+         ]
+        }
+       },
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "OutputBucket7114EB27",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "OutputBucket7114EB27",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/OutputBucket/Policy/Resource"
+   }
+  },
+  "OutputBucketAutoDeleteObjectsCustomResource6C7A161F": {
+   "Type": "Custom::S3AutoDeleteObjects",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+      "Arn"
+     ]
+    },
+    "BucketName": {
+     "Ref": "OutputBucket7114EB27"
+    }
+   },
+   "DependsOn": [
+    "OutputBucketPolicyAE009DDC"
+   ],
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/OutputBucket/AutoDeleteObjectsCustomResource/Default"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+   }
+  },
+  "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-713520983597-us-east-1",
+     "S3Key": "faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Description": {
+     "Fn::Join": [
+      "",
+      [
+       "Lambda function for auto-deleting objects in ",
+       {
+        "Ref": "OutputBucket7114EB27"
+       },
+       " S3 bucket."
+      ]
+     ]
+    }
+   },
+   "DependsOn": [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.faa95a81ae7d7373f3e1f242268f904eb748d8d0fdd306e8a6fe515a1905a7d6",
+    "aws:asset:property": "Code"
+   }
+  },
+  "AgentRoleF4A42D6B": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Condition": {
+        "StringEquals": {
+         "aws:SourceAccount": "713520983597"
+        }
+       },
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "bedrock.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "RoleName": "banking-bi-bedrock-agent",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/AgentRole/Resource"
+   }
+  },
+  "AgentRoleDefaultPolicy1027F5D2": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "bedrock:InvokeModel",
+       "Effect": "Allow",
+       "Resource": "arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0"
+      },
+      {
+       "Action": "bedrock:InvokeAgent",
+       "Effect": "Allow",
+       "Resource": "arn:aws:bedrock:us-east-1:713520983597:agent/*"
+      },
+      {
+       "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:ListBucket"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "OutputBucket7114EB27",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "OutputBucket7114EB27",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        },
+        "arn:aws:s3:::banking-bi-metric-docs-713520983597",
+        "arn:aws:s3:::banking-bi-metric-docs-713520983597/*"
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "AgentRoleDefaultPolicy1027F5D2",
+    "Roles": [
+     {
+      "Ref": "AgentRoleF4A42D6B"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/AgentRole/DefaultPolicy/Resource"
+   }
+  },
+  "LambdaRole3A44B857": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ],
+    "RoleName": "banking-bi-agent-lambda",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/LambdaRole/Resource"
+   }
+  },
+  "LambdaRoleDefaultPolicy75625A82": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "rds:DescribeDBInstances",
+        "rds-data:ExecuteStatement",
+        "secretsmanager:GetSecretValue",
+        "bedrock:InvokeModel",
+        "bedrock:InvokeAgent",
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:ListBucket",
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:Query",
+        "sns:Publish",
+        "ssm:GetParameters",
+        "ssm:GetParameter",
+        "lambda:InvokeFunction"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LambdaRoleDefaultPolicy75625A82",
+    "Roles": [
+     {
+      "Ref": "LambdaRole3A44B857"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/LambdaRole/DefaultPolicy/Resource"
+   }
+  },
+  "KPILambda3FE7B951": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-713520983597-us-east-1",
+     "S3Key": "05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SESSION_TABLE": {
+       "Ref": "SessionTableA016F679"
+      },
+      "SUMMARY_TOPIC_ARN": {
+       "Ref": "SummaryTopicCB81EE8C"
+      },
+      "OUTPUT_BUCKET": {
+       "Ref": "OutputBucket7114EB27"
+      },
+      "MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "REGION": "us-east-1",
+      "ACCOUNT": "713520983597",
+      "RDS_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:713520983597:secret:banking-bi/rds/admin",
+      "RDS_DB_NAME": "banking_bi",
+      "METRIC_DOCS_BUCKET": "banking-bi-metric-docs-713520983597"
+     }
+    },
+    "FunctionName": "banking-bi-kpi-action",
+    "Handler": "kpi_action.handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "Timeout": 300
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/KPILambda/Resource",
+    "aws:asset:path": "asset.05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "KPILambdaBedrockInvokeKPIADA26392": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "KPILambda3FE7B951",
+      "Arn"
+     ]
+    },
+    "Principal": "bedrock.amazonaws.com",
+    "SourceArn": "arn:aws:bedrock:us-east-1:713520983597:agent/*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/KPILambda/BedrockInvokeKPI"
+   }
+  },
+  "DriverLambda11B3F668": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-713520983597-us-east-1",
+     "S3Key": "05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SESSION_TABLE": {
+       "Ref": "SessionTableA016F679"
+      },
+      "SUMMARY_TOPIC_ARN": {
+       "Ref": "SummaryTopicCB81EE8C"
+      },
+      "OUTPUT_BUCKET": {
+       "Ref": "OutputBucket7114EB27"
+      },
+      "MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "REGION": "us-east-1",
+      "ACCOUNT": "713520983597",
+      "RDS_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:713520983597:secret:banking-bi/rds/admin",
+      "RDS_DB_NAME": "banking_bi",
+      "METRIC_DOCS_BUCKET": "banking-bi-metric-docs-713520983597"
+     }
+    },
+    "FunctionName": "banking-bi-driver-action",
+    "Handler": "driver_action.handler",
+    "MemorySize": 512,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "Timeout": 300
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/DriverLambda/Resource",
+    "aws:asset:path": "asset.05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "DriverLambdaBedrockInvokeDriver48611DF6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "DriverLambda11B3F668",
+      "Arn"
+     ]
+    },
+    "Principal": "bedrock.amazonaws.com",
+    "SourceArn": "arn:aws:bedrock:us-east-1:713520983597:agent/*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/DriverLambda/BedrockInvokeDriver"
+   }
+  },
+  "ValidationLambda6B331F4E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-713520983597-us-east-1",
+     "S3Key": "05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SESSION_TABLE": {
+       "Ref": "SessionTableA016F679"
+      },
+      "SUMMARY_TOPIC_ARN": {
+       "Ref": "SummaryTopicCB81EE8C"
+      },
+      "OUTPUT_BUCKET": {
+       "Ref": "OutputBucket7114EB27"
+      },
+      "MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "REGION": "us-east-1",
+      "ACCOUNT": "713520983597",
+      "RDS_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:713520983597:secret:banking-bi/rds/admin",
+      "RDS_DB_NAME": "banking_bi",
+      "METRIC_DOCS_BUCKET": "banking-bi-metric-docs-713520983597"
+     }
+    },
+    "FunctionName": "banking-bi-validation-action",
+    "Handler": "validation_action.handler",
+    "MemorySize": 256,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "Timeout": 180
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/ValidationLambda/Resource",
+    "aws:asset:path": "asset.05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "ValidationLambdaBedrockInvokeValidation1A107B7A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "ValidationLambda6B331F4E",
+      "Arn"
+     ]
+    },
+    "Principal": "bedrock.amazonaws.com",
+    "SourceArn": "arn:aws:bedrock:us-east-1:713520983597:agent/*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/ValidationLambda/BedrockInvokeValidation"
+   }
+  },
+  "PDFLambda24F2B082": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-713520983597-us-east-1",
+     "S3Key": "05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SESSION_TABLE": {
+       "Ref": "SessionTableA016F679"
+      },
+      "SUMMARY_TOPIC_ARN": {
+       "Ref": "SummaryTopicCB81EE8C"
+      },
+      "OUTPUT_BUCKET": {
+       "Ref": "OutputBucket7114EB27"
+      },
+      "MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "REGION": "us-east-1",
+      "ACCOUNT": "713520983597",
+      "RDS_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:713520983597:secret:banking-bi/rds/admin",
+      "RDS_DB_NAME": "banking_bi",
+      "METRIC_DOCS_BUCKET": "banking-bi-metric-docs-713520983597"
+     }
+    },
+    "FunctionName": "banking-bi-pdf-action",
+    "Handler": "pdf_action.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "Timeout": 600
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/PDFLambda/Resource",
+    "aws:asset:path": "asset.05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "PDFLambdaBedrockInvokePDF68468BE1": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "PDFLambda24F2B082",
+      "Arn"
+     ]
+    },
+    "Principal": "bedrock.amazonaws.com",
+    "SourceArn": "arn:aws:bedrock:us-east-1:713520983597:agent/*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/PDFLambda/BedrockInvokePDF"
+   }
+  },
+  "SupervisorLambdaC3BF47E0": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-713520983597-us-east-1",
+     "S3Key": "05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "SESSION_TABLE": {
+       "Ref": "SessionTableA016F679"
+      },
+      "SUMMARY_TOPIC_ARN": {
+       "Ref": "SummaryTopicCB81EE8C"
+      },
+      "OUTPUT_BUCKET": {
+       "Ref": "OutputBucket7114EB27"
+      },
+      "MODEL_ID": "anthropic.claude-sonnet-4-20250514-v1:0",
+      "REGION": "us-east-1",
+      "ACCOUNT": "713520983597",
+      "RDS_SECRET_ARN": "arn:aws:secretsmanager:us-east-1:713520983597:secret:banking-bi/rds/admin",
+      "RDS_DB_NAME": "banking_bi",
+      "METRIC_DOCS_BUCKET": "banking-bi-metric-docs-713520983597",
+      "KPI_LAMBDA": {
+       "Ref": "KPILambda3FE7B951"
+      },
+      "DRIVER_LAMBDA": {
+       "Ref": "DriverLambda11B3F668"
+      },
+      "VALIDATION_LAMBDA": {
+       "Ref": "ValidationLambda6B331F4E"
+      },
+      "PDF_LAMBDA": {
+       "Ref": "PDFLambda24F2B082"
+      }
+     }
+    },
+    "FunctionName": "banking-bi-supervisor",
+    "Handler": "supervisor.handler",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "LambdaRole3A44B857",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.12",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "LambdaRoleDefaultPolicy75625A82",
+    "LambdaRole3A44B857"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/SupervisorLambda/Resource",
+    "aws:asset:path": "asset.05743fa5fbce48a2634ca2258e677d07f32e0a1e7b6e247a5bf73f218f6c4222",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SupervisorLambdaBedrockInvokeSupervisorCA4E298A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SupervisorLambdaC3BF47E0",
+      "Arn"
+     ]
+    },
+    "Principal": "bedrock.amazonaws.com",
+    "SourceArn": "arn:aws:bedrock:us-east-1:713520983597:agent/*"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/SupervisorLambda/BedrockInvokeSupervisor"
+   }
+  },
+  "KPIAgent": {
+   "Type": "AWS::Bedrock::Agent",
+   "Properties": {
+    "ActionGroups": [
+     {
+      "ActionGroupExecutor": {
+       "Lambda": {
+        "Fn::GetAtt": [
+         "KPILambda3FE7B951",
+         "Arn"
+        ]
+       }
+      },
+      "ActionGroupName": "kpi-data-actions",
+      "Description": "Actions to retrieve KPI data from the banking database",
+      "FunctionSchema": {
+       "Functions": [
+        {
+         "Description": "Retrieve current KPI values and trends",
+         "Name": "get_kpi_data",
+         "Parameters": {
+          "kpi_names": {
+           "Description": "Comma-separated KPI names: nim,npl_ratio,casa_ratio,roe_roa,cost_income,lcr_nsfr",
+           "Required": true,
+           "Type": "string"
+          },
+          "period": {
+           "Description": "Period: daily, mtd, qtd, ytd",
+           "Required": false,
+           "Type": "string"
+          }
+         }
+        },
+        {
+         "Description": "Get KPI breakdown by business unit, product, or geography",
+         "Name": "get_kpi_breakdown",
+         "Parameters": {
+          "kpi_name": {
+           "Description": "KPI name to break down",
+           "Required": true,
+           "Type": "string"
+          },
+          "dimension": {
+           "Description": "Breakdown dimension: business_unit, product, region",
+           "Required": true,
+           "Type": "string"
+          }
+         }
+        }
+       ]
+      }
+     }
+    ],
+    "AgentName": "banking-bi-kpi-investigation",
+    "AgentResourceRoleArn": {
+     "Fn::GetAtt": [
+      "AgentRoleF4A42D6B",
+      "Arn"
+     ]
+    },
+    "AutoPrepare": true,
+    "Description": "Queries RDS for current KPI values and detects anomalies",
+    "FoundationModel": "anthropic.claude-sonnet-4-20250514-v1:0",
+    "Instruction": "You are a banking KPI investigation specialist.\nYour role is to query the banking database for current KPI values,\nidentify anomalies, and provide precise quantitative analysis.\n\nWhen investigating KPIs:\n1. Always retrieve current value AND historical comparison (WoW, MoM, YoY)\n2. Identify which business units and products are driving changes\n3. Flag any metrics breaching alert thresholds\n4. Provide basis point changes, not just percentages\n5. Never interpret — only report what the data shows\n\nUse the get_kpi_data action to retrieve KPI information.\nUse the get_kpi_breakdown action for segment/product details.",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "3-Agents",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/KPIAgent"
+   }
+  },
+  "DriverAgent": {
+   "Type": "AWS::Bedrock::Agent",
+   "Properties": {
+    "ActionGroups": [
+     {
+      "ActionGroupExecutor": {
+       "Lambda": {
+        "Fn::GetAtt": [
+         "DriverLambda11B3F668",
+         "Arn"
+        ]
+       }
+      },
+      "ActionGroupName": "driver-analysis-actions",
+      "Description": "Actions to analyse KPI movement drivers",
+      "FunctionSchema": {
+       "Functions": [
+        {
+         "Description": "Analyse drivers of KPI movements using segment correlation",
+         "Name": "analyse_drivers",
+         "Parameters": {
+          "kpi_name": {
+           "Description": "KPI to analyse drivers for",
+           "Required": true,
+           "Type": "string"
+          },
+          "change_direction": {
+           "Description": "Direction of change: up or down",
+           "Required": true,
+           "Type": "string"
+          }
+         }
+        }
+       ]
+      }
+     }
+    ],
+    "AgentName": "banking-bi-driver-analysis",
+    "AgentResourceRoleArn": {
+     "Fn::GetAtt": [
+      "AgentRoleF4A42D6B",
+      "Arn"
+     ]
+    },
+    "AutoPrepare": true,
+    "Description": "Identifies likely drivers of KPI movements",
+    "FoundationModel": "anthropic.claude-sonnet-4-20250514-v1:0",
+    "Instruction": "You are a banking analytics expert specialising\nin root cause analysis of KPI movements.\n\nYour role is to identify the 3-5 most likely drivers of observed\nKPI changes, ranked by confidence. For each driver provide:\n- Clear description of the driver\n- Supporting data evidence\n- Confidence level (high/medium/low)\n- Which KPIs are affected\n\nFocus on:\n- Mix shifts (product, customer segment, geography)\n- Rate movements (pricing, funding costs)\n- Volume changes (new business, runoff, attrition)\n- Credit quality changes (NPL migration, provision movements)\n- External factors (macro, regulatory, seasonal)\n\nUse the analyse_drivers action to run correlation analysis.",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "3-Agents",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/DriverAgent"
+   }
+  },
+  "ValidationAgent": {
+   "Type": "AWS::Bedrock::Agent",
+   "Properties": {
+    "ActionGroups": [
+     {
+      "ActionGroupExecutor": {
+       "Lambda": {
+        "Fn::GetAtt": [
+         "ValidationLambda6B331F4E",
+         "Arn"
+        ]
+       }
+      },
+      "ActionGroupName": "validation-actions",
+      "Description": "Actions to validate metric calculations",
+      "FunctionSchema": {
+       "Functions": [
+        {
+         "Description": "Validate a KPI calculation against its governed definition",
+         "Name": "validate_metric",
+         "Parameters": {
+          "kpi_name": {
+           "Description": "KPI to validate",
+           "Required": true,
+           "Type": "string"
+          }
+         }
+        }
+       ]
+      }
+     }
+    ],
+    "AgentName": "banking-bi-metric-validation",
+    "AgentResourceRoleArn": {
+     "Fn::GetAtt": [
+      "AgentRoleF4A42D6B",
+      "Arn"
+     ]
+    },
+    "AutoPrepare": true,
+    "Description": "Validates KPI calculations against governed definitions",
+    "FoundationModel": "anthropic.claude-sonnet-4-20250514-v1:0",
+    "Instruction": "You are a banking governance and compliance specialist.\n\nYour role is to validate that KPI calculations conform to the bank's\nofficial governed metric definitions. For each KPI:\n1. Retrieve the official definition from the metric definitions library\n2. Compare the actual calculation method against the definition\n3. Verify data sources match the governed sources\n4. Confirm thresholds align with policy\n5. Flag any deviations with severity\n\nNever approve a KPI that uses a non-standard formula.\nAlways cite the specific section of the definition document.\n\nUse the validate_metric action to perform validation.",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "3-Agents",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/ValidationAgent"
+   }
+  },
+  "SupervisorAgent": {
+   "Type": "AWS::Bedrock::Agent",
+   "Properties": {
+    "ActionGroups": [
+     {
+      "ActionGroupExecutor": {
+       "Lambda": {
+        "Fn::GetAtt": [
+         "PDFLambda24F2B082",
+         "Arn"
+        ]
+       }
+      },
+      "ActionGroupName": "pdf-report-actions",
+      "Description": "Actions to generate and deliver PDF executive reports",
+      "FunctionSchema": {
+       "Functions": [
+        {
+         "Description": "Generate an executive PDF report from investigation findings",
+         "Name": "generate_pdf_report",
+         "Parameters": {
+          "session_id": {
+           "Description": "Investigation session ID",
+           "Required": true,
+           "Type": "string"
+          },
+          "headline": {
+           "Description": "One-sentence headline finding",
+           "Required": true,
+           "Type": "string"
+          },
+          "findings_json": {
+           "Description": "JSON string of all investigation findings",
+           "Required": true,
+           "Type": "string"
+          },
+          "risk_level": {
+           "Description": "Overall risk level: low, medium, high, critical",
+           "Required": true,
+           "Type": "string"
+          }
+         }
+        },
+        {
+         "Description": "Deliver completed PDF report via SNS to executives",
+         "Name": "deliver_report",
+         "Parameters": {
+          "session_id": {
+           "Description": "Session ID of completed report",
+           "Required": true,
+           "Type": "string"
+          },
+          "recipient_group": {
+           "Description": "Recipient group: board, exco, cro, cfo, all",
+           "Required": false,
+           "Type": "string"
+          }
+         }
+        }
+       ]
+      }
+     }
+    ],
+    "AgentName": "banking-bi-supervisor",
+    "AgentResourceRoleArn": {
+     "Fn::GetAtt": [
+      "AgentRoleF4A42D6B",
+      "Arn"
+     ]
+    },
+    "AutoPrepare": true,
+    "Description": "Orchestrates KPI investigation and generates executive PDF reports",
+    "FoundationModel": "anthropic.claude-sonnet-4-20250514-v1:0",
+    "Instruction": "You are the Banking BI Copilot supervisor agent.\nYou orchestrate a team of specialist sub-agents to investigate\nKPI movements and produce executive-grade PDF reports.\n\nINVESTIGATION WORKFLOW:\n1. Receive investigation request (anomaly event or user question)\n2. Delegate to KPI Investigation agent to retrieve current data\n3. Delegate to Driver Analysis agent to identify root causes\n4. Delegate to Metric Validation agent to confirm calculations\n5. Synthesise all findings into a coherent narrative\n6. Generate PDF executive report via the pdf_report action\n7. Deliver report via SNS notification\n\nREPORT STANDARDS:\n- Every KPI cited must be validated by the Metric Validation agent\n- Every driver claim must have supporting data evidence\n- Risk flags must reference specific regulatory thresholds\n- Recommended actions must be specific and actionable\n- Language must be appropriate for CEO/Board audience\n\nAlways complete all four investigation steps before generating the PDF.",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "3-Agents",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/SupervisorAgent"
+   }
+  },
+  "KPIAlias": {
+   "Type": "AWS::Bedrock::AgentAlias",
+   "Properties": {
+    "AgentAliasName": "live",
+    "AgentId": {
+     "Fn::GetAtt": [
+      "KPIAgent",
+      "AgentId"
+     ]
+    },
+    "Description": "KPI Investigation agent live alias",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "3-Agents",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/KPIAlias"
+   }
+  },
+  "DriverAlias": {
+   "Type": "AWS::Bedrock::AgentAlias",
+   "Properties": {
+    "AgentAliasName": "live",
+    "AgentId": {
+     "Fn::GetAtt": [
+      "DriverAgent",
+      "AgentId"
+     ]
+    },
+    "Description": "Driver Analysis agent live alias",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "3-Agents",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/DriverAlias"
+   }
+  },
+  "ValidationAlias": {
+   "Type": "AWS::Bedrock::AgentAlias",
+   "Properties": {
+    "AgentAliasName": "live",
+    "AgentId": {
+     "Fn::GetAtt": [
+      "ValidationAgent",
+      "AgentId"
+     ]
+    },
+    "Description": "Metric Validation agent live alias",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "3-Agents",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/ValidationAlias"
+   }
+  },
+  "SupervisorAlias": {
+   "Type": "AWS::Bedrock::AgentAlias",
+   "Properties": {
+    "AgentAliasName": "live",
+    "AgentId": {
+     "Fn::GetAtt": [
+      "SupervisorAgent",
+      "AgentId"
+     ]
+    },
+    "Description": "Supervisor agent live alias",
+    "Tags": {
+     "ManagedBy": "CDK",
+     "Phase": "3-Agents",
+     "Project": "BankingBICopilot"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/SupervisorAlias"
+   }
+  },
+  "BIApi61E02BDF": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Banking BI Copilot conversational API",
+    "Name": "banking-bi-copilot",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Resource"
+   }
+  },
+  "BIApiCloudWatchRole322622B4": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ],
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/CloudWatchRole/Resource"
+   }
+  },
+  "BIApiAccount3AC2D373": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "BIApiCloudWatchRole322622B4",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "BIApi61E02BDF"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Account"
+   }
+  },
+  "BIApiDeploymentF41811C4b7d01039bb8733836c78f0f0819076e9": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Banking BI Copilot conversational API",
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    }
+   },
+   "DependsOn": [
+    "BIApichatOPTIONS66DA1371",
+    "BIApichatPOST9D84BCBB",
+    "BIApichat10E8A80B",
+    "BIApiinvestigateOPTIONS0907BEE1",
+    "BIApiinvestigatePOST2DA1F68B",
+    "BIApiinvestigateAD90613C",
+    "BIApiOPTIONSC60CA819"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "BIApiDeploymentStageprod66400DB6": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "BIApiDeploymentF41811C4b7d01039bb8733836c78f0f0819076e9"
+    },
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    },
+    "StageName": "prod",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ]
+   },
+   "DependsOn": [
+    "BIApiAccount3AC2D373"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "BIApiOPTIONSC60CA819": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "BIApi61E02BDF",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/OPTIONS/Resource"
+   }
+  },
+  "BIApiinvestigateAD90613C": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "BIApi61E02BDF",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "investigate",
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/investigate/Resource"
+   }
+  },
+  "BIApiinvestigateOPTIONS0907BEE1": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "BIApiinvestigateAD90613C"
+    },
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/investigate/OPTIONS/Resource"
+   }
+  },
+  "BIApiinvestigatePOSTApiPermissionBankingBIAgentsBIApi04D9239APOSTinvestigate6A03570D": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SupervisorLambdaC3BF47E0",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:713520983597:",
+       {
+        "Ref": "BIApi61E02BDF"
+       },
+       "/",
+       {
+        "Ref": "BIApiDeploymentStageprod66400DB6"
+       },
+       "/POST/investigate"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/investigate/POST/ApiPermission.BankingBIAgentsBIApi04D9239A.POST..investigate"
+   }
+  },
+  "BIApiinvestigatePOSTApiPermissionTestBankingBIAgentsBIApi04D9239APOSTinvestigateAED0DC28": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SupervisorLambdaC3BF47E0",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:713520983597:",
+       {
+        "Ref": "BIApi61E02BDF"
+       },
+       "/test-invoke-stage/POST/investigate"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/investigate/POST/ApiPermission.Test.BankingBIAgentsBIApi04D9239A.POST..investigate"
+   }
+  },
+  "BIApiinvestigatePOST2DA1F68B": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "SupervisorLambdaC3BF47E0",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "BIApiinvestigateAD90613C"
+    },
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/investigate/POST/Resource"
+   }
+  },
+  "BIApichat10E8A80B": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "BIApi61E02BDF",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "chat",
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/chat/Resource"
+   }
+  },
+  "BIApichatOPTIONS66DA1371": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "BIApichat10E8A80B"
+    },
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/chat/OPTIONS/Resource"
+   }
+  },
+  "BIApichatPOSTApiPermissionBankingBIAgentsBIApi04D9239APOSTchat68A0453E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SupervisorLambdaC3BF47E0",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:713520983597:",
+       {
+        "Ref": "BIApi61E02BDF"
+       },
+       "/",
+       {
+        "Ref": "BIApiDeploymentStageprod66400DB6"
+       },
+       "/POST/chat"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/chat/POST/ApiPermission.BankingBIAgentsBIApi04D9239A.POST..chat"
+   }
+  },
+  "BIApichatPOSTApiPermissionTestBankingBIAgentsBIApi04D9239APOSTchat2A5C47B1": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SupervisorLambdaC3BF47E0",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:713520983597:",
+       {
+        "Ref": "BIApi61E02BDF"
+       },
+       "/test-invoke-stage/POST/chat"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/chat/POST/ApiPermission.Test.BankingBIAgentsBIApi04D9239A.POST..chat"
+   }
+  },
+  "BIApichatPOST9D84BCBB": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "SupervisorLambdaC3BF47E0",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "BIApichat10E8A80B"
+    },
+    "RestApiId": {
+     "Ref": "BIApi61E02BDF"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/BIApi/Default/chat/POST/Resource"
+   }
+  },
+  "AnomalyRule3B8A11EA": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Triggers agent investigation when KPI anomaly detected",
+    "EventPattern": {
+     "detail-type": [
+      "KPI Anomaly Detected"
+     ],
+     "source": [
+      "banking-bi.etl"
+     ]
+    },
+    "Name": "banking-bi-kpi-anomaly",
+    "State": "ENABLED",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "SupervisorLambdaC3BF47E0",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/AnomalyRule/Resource"
+   }
+  },
+  "AnomalyRuleAllowEventRuleBankingBIAgentsSupervisorLambdaD4A5462562D96044": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SupervisorLambdaC3BF47E0",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "AnomalyRule3B8A11EA",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/AnomalyRule/AllowEventRuleBankingBIAgentsSupervisorLambdaD4A54625"
+   }
+  },
+  "DailyRule7A0FEF67": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "Description": "Daily executive report at 06:00 UTC",
+    "Name": "banking-bi-daily-report",
+    "ScheduleExpression": "cron(0 6 * * ? *)",
+    "State": "ENABLED",
+    "Tags": [
+     {
+      "Key": "ManagedBy",
+      "Value": "CDK"
+     },
+     {
+      "Key": "Phase",
+      "Value": "3-Agents"
+     },
+     {
+      "Key": "Project",
+      "Value": "BankingBICopilot"
+     }
+    ],
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "SupervisorLambdaC3BF47E0",
+        "Arn"
+       ]
+      },
+      "Id": "Target0",
+      "Input": "{\"trigger\":\"scheduled\",\"kpis\":[\"nim\",\"npl_ratio\",\"casa_ratio\",\"roe_roa\",\"cost_income\",\"lcr_nsfr\"],\"output_format\":\"pdf\",\"recipient_group\":\"exco\"}"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/DailyRule/Resource"
+   }
+  },
+  "DailyRuleAllowEventRuleBankingBIAgentsSupervisorLambdaD4A546258A14C93A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SupervisorLambdaC3BF47E0",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "DailyRule7A0FEF67",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/DailyRule/AllowEventRuleBankingBIAgentsSupervisorLambdaD4A54625"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/5WQQU8jMQyFfws9p96FcljtbQBxQ1RTbiuEMhlTTCfJaOxQRlH+O0rSVUervXDyl7z42XlXcHX9C35e6COvTX9YD9RB3Ik2B6WP/BL72Wnr+w7ik+4GVLevrkBS7Bjikx/JlMsMSfEG4k0wB5R8WelPXFn6JLf6vVpOyfa8gSIx1KdNEH+HAwo+du9ohFfpWVVp6wcy89m1nr/hXRt2ogUtuqX1jWZMirSF2Pr6x1LPIyslNWjb9RrifXBGyLusLXmLkyVm8i5H8aKZURiaXFSH/eTNAeLtq2v26EpCBZqBNCelR9prwaOeIbbI0oxUVjljY4wPTtQdjoOf7cljcdqJ3pf9K7TIPkwG8wfVA8qb77N4or/qaUjhpPAjhwOxDackwoApLR4HFm//1/uPtJ38B/U4leElgrwUuX3ueQwyBklqO8ubdz82cHkNm4t3JlpPwQlZhLbWL7rjL0uhAgAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "BankingBIAgents/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "BIApiEndpoint9111C0D6": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "BIApi61E02BDF"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "BIApiDeploymentStageprod66400DB6"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "SupervisorAgentId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "SupervisorAgent",
+     "AgentId"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-SupervisorAgentId"
+   }
+  },
+  "SupervisorAliasId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "SupervisorAlias",
+     "AgentAliasId"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-SupervisorAliasId"
+   }
+  },
+  "KPIAgentId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "KPIAgent",
+     "AgentId"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-KPIAgentId"
+   }
+  },
+  "KPIAliasId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "KPIAlias",
+     "AgentAliasId"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-KPIAliasId"
+   }
+  },
+  "DriverAgentId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "DriverAgent",
+     "AgentId"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-DriverAgentId"
+   }
+  },
+  "ValidationAgentId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ValidationAgent",
+     "AgentId"
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-ValidationAgentId"
+   }
+  },
+  "ApiEndpoint": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "BIApi61E02BDF"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "BIApiDeploymentStageprod66400DB6"
+      },
+      "/"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-ApiEndpoint"
+   }
+  },
+  "ChatEndpoint": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "BIApi61E02BDF"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "BIApiDeploymentStageprod66400DB6"
+      },
+      "/chat"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "BankingBI-ChatEndpoint"
+   }
+  },
+  "OutputBucketName": {
+   "Value": {
+    "Ref": "OutputBucket7114EB27"
+   },
+   "Export": {
+    "Name": "BankingBI-ReportsBucket"
+   }
+  },
+  "SummaryTopicArn": {
+   "Value": {
+    "Ref": "SummaryTopicCB81EE8C"
+   },
+   "Export": {
+    "Name": "BankingBI-SummaryTopic"
+   }
+  },
+  "SessionTableName": {
+   "Value": {
+    "Ref": "SessionTableA016F679"
+   },
+   "Export": {
+    "Name": "BankingBI-SessionTable"
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

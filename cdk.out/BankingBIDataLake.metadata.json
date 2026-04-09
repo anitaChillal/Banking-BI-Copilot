@@ -1,0 +1,93 @@
+{
+  "/BankingBIDataLake": [
+    {
+      "type": "aws:cdk:stack-tags",
+      "data": [
+        {
+          "key": "ManagedBy",
+          "value": "CDK"
+        },
+        {
+          "key": "Phase",
+          "value": "1-DataFoundation"
+        },
+        {
+          "key": "Project",
+          "value": "BankingBICopilot"
+        }
+      ]
+    }
+  ],
+  "/BankingBIDataLake/BootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "BootstrapVersion"
+    }
+  ],
+  "/BankingBIDataLake/CheckBootstrapVersion": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CheckBootstrapVersion"
+    }
+  ],
+  "/BankingBIDataLake/LakeKey/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LakeKey09476F72"
+    }
+  ],
+  "/BankingBIDataLake/LakeAccessLogs/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LakeAccessLogs2771B56A"
+    }
+  ],
+  "/BankingBIDataLake/LakeBucket/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LakeBucket9CD7BBD2"
+    }
+  ],
+  "/BankingBIDataLake/CDKMetadata/Default": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "CDKMetadata"
+    }
+  ],
+  "/BankingBIDataLake/Exports/Output{\"Fn::GetAtt\":[\"LakeBucket9CD7BBD2\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttLakeBucket9CD7BBD2ArnF3D61E7E"
+    }
+  ],
+  "/BankingBIDataLake/Exports/Output{\"Fn::GetAtt\":[\"LakeKey09476F72\",\"Arn\"]}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputFnGetAttLakeKey09476F72ArnAB3AB838"
+    }
+  ],
+  "/BankingBIDataLake/Exports/Output{\"Ref\":\"LakeBucket9CD7BBD2\"}": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "ExportsOutputRefLakeBucket9CD7BBD21345140F"
+    }
+  ],
+  "/BankingBIDataLake/LakeKey/Alias/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LakeKeyAlias393B19AD"
+    }
+  ],
+  "/BankingBIDataLake/LakeAccessLogs/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LakeAccessLogsPolicyAE10E3BA"
+    }
+  ],
+  "/BankingBIDataLake/LakeBucket/Policy/Resource": [
+    {
+      "type": "aws:cdk:logicalId",
+      "data": "LakeBucketPolicy7D3A2454"
+    }
+  ]
+}

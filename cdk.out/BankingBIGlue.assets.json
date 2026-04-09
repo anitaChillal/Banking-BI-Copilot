@@ -1,0 +1,21 @@
+{
+  "version": "53.0.0",
+  "files": {
+    "989d30e0588192ebff3e4ff002945e5912060feee8c156362f81e38dd042e5a4": {
+      "displayName": "BankingBIGlue Template",
+      "source": {
+        "path": "BankingBIGlue.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "713520983597-us-east-1-608c545e": {
+          "bucketName": "cdk-hnb659fds-assets-713520983597-us-east-1",
+          "objectKey": "989d30e0588192ebff3e4ff002945e5912060feee8c156362f81e38dd042e5a4.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::713520983597:role/cdk-hnb659fds-file-publishing-role-713520983597-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

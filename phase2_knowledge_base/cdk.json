@@ -1,0 +1,7 @@
+{
+  "app": ".venv\\Scripts\\python.exe app.py",
+  "context": {
+    "account": "713520983597",
+    "region": "us-east-1"
+  }
+}

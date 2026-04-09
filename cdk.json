@@ -1,0 +1,21 @@
+{
+  "app": "C:\\Users\\anita\\banking-bi-copilot\\.venv\\Scripts\\python.exe app.py",
+  "watch": {
+    "include": ["**"],
+    "exclude": [
+      "README.md",
+      "cdk*.json",
+      "**/__pycache__/**",
+      "**/*.pyc",
+      ".venv/**"
+    ]
+  },
+  "context": {
+    "@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId": true,
+    "@aws-cdk/aws-cloudfront:defaultSecurityPolicyTLSv1.2_2021": true,
+    "@aws-cdk/aws-rds:lowercaseDbIdentifier": true,
+    "@aws-cdk/core:stackRelativeExports": true,
+    "account": "713520983597",
+    "region": "us-east-1"
+  }
+}
